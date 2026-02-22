@@ -1,84 +1,11 @@
-<script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref } from "vue";
-
-const activeMobileTab = ref("jak-to-dziala");
-const mobileSearchOpen = ref(false);
-const mobileSearchInput = ref<HTMLInputElement | null>(null);
-const mobileSearchRef = ref<HTMLElement | null>(null);
-const desktopSearchOpen = ref(false);
-const desktopSearchInput = ref<HTMLInputElement | null>(null);
-const desktopSearchRef = ref<HTMLElement | null>(null);
-
-const setActiveMobileTab = (tab: "jak-to-dziala" | "spolecznosc" | "o-nas") => {
-  activeMobileTab.value = tab;
-};
-
-const syncTabWithHash = () => {
-  const hash = window.location.hash.replace("#", "");
-  if (hash === "jak-to-dziala" || hash === "spolecznosc" || hash === "o-nas") {
-    activeMobileTab.value = hash;
-  }
-};
-
-const toggleMobileSearch = async () => {
-  mobileSearchOpen.value = !mobileSearchOpen.value;
-  if (mobileSearchOpen.value) {
-    await nextTick();
-    mobileSearchInput.value?.focus();
-  }
-};
-
-const closeMobileSearch = () => {
-  mobileSearchOpen.value = false;
-};
-
-const toggleDesktopSearch = async () => {
-  desktopSearchOpen.value = !desktopSearchOpen.value;
-  if (desktopSearchOpen.value) {
-    await nextTick();
-    desktopSearchInput.value?.focus();
-  }
-};
-
-const closeDesktopSearch = () => {
-  desktopSearchOpen.value = false;
-};
-
-const handleDocumentClick = (event: MouseEvent) => {
-  if (!(event.target instanceof Node)) {
-    return;
-  }
-  if (mobileSearchRef.value && !mobileSearchRef.value.contains(event.target)) {
-    closeMobileSearch();
-  }
-  if (
-    desktopSearchRef.value &&
-    !desktopSearchRef.value.contains(event.target)
-  ) {
-    closeDesktopSearch();
-  }
-};
-
-onMounted(() => {
-  syncTabWithHash();
-  window.addEventListener("hashchange", syncTabWithHash);
-  document.addEventListener("click", handleDocumentClick);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("hashchange", syncTabWithHash);
-  document.removeEventListener("click", handleDocumentClick);
-});
-</script>
-
 <template>
   <header class="navbar">
-    <a href="#" class="logo">
+    <NuxtLink to="/" class="logo">
       <span class="logo-mark">
         <Icon name="mdi:leaf" class="logo-mark-icon" />
       </span>
       <span class="logo-text">Zielona<span>Przesiadka</span></span>
-    </a>
+    </NuxtLink>
 
     <div
       ref="mobileSearchRef"
@@ -135,9 +62,9 @@ onUnmounted(() => {
         />
       </div>
       <span class="divider" aria-hidden="true"></span>
-      <a href="#konto" class="login-btn">
-        <span>Zaloguj się</span>
-      </a>
+      <NuxtLink :to="user ? '/account' : '/auth/login'" class="login-btn">
+        <span>{{ user ? "Moje konto" : "Zaloguj się" }}</span>
+      </NuxtLink>
     </div>
   </header>
 
@@ -177,12 +104,98 @@ onUnmounted(() => {
       <Icon size="24" name="mdi:information-outline" class="bottom-link-icon" />
       <span>O nas</span>
     </a>
-    <a href="#konto" class="bottom-link login-mobile-link">
-      <Icon size="24" name="mdi:login-variant" class="bottom-link-icon" />
-      <span>Zaloguj</span>
-    </a>
+    <NuxtLink :to="user ? '/account' : '/auth/login'" class="bottom-link">
+      <Icon
+        v-if="!user"
+        size="24"
+        name="mdi:login-variant"
+        class="bottom-link-icon"
+      />
+      <Icon
+        v-else
+        size="24"
+        name="mdi:account-circle-outline"
+        class="bottom-link-icon"
+      />
+      <span>{{ user ? "Moje konto" : "Zaloguj się" }}</span>
+    </NuxtLink>
   </nav>
 </template>
+
+<script setup lang="ts">
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
+
+const activeMobileTab = ref("jak-to-dziala");
+const mobileSearchOpen = ref(false);
+const mobileSearchInput = ref<HTMLInputElement | null>(null);
+const mobileSearchRef = ref<HTMLElement | null>(null);
+const desktopSearchOpen = ref(false);
+const desktopSearchInput = ref<HTMLInputElement | null>(null);
+const desktopSearchRef = ref<HTMLElement | null>(null);
+const { user, fetchMe } = useAuth();
+
+const setActiveMobileTab = (tab: "jak-to-dziala" | "spolecznosc" | "o-nas") => {
+  activeMobileTab.value = tab;
+};
+
+const syncTabWithHash = () => {
+  const hash = window.location.hash.replace("#", "");
+  if (hash === "jak-to-dziala" || hash === "spolecznosc" || hash === "o-nas") {
+    activeMobileTab.value = hash;
+  }
+};
+
+const toggleMobileSearch = async () => {
+  mobileSearchOpen.value = !mobileSearchOpen.value;
+  if (mobileSearchOpen.value) {
+    await nextTick();
+    mobileSearchInput.value?.focus();
+  }
+};
+
+const closeMobileSearch = () => {
+  mobileSearchOpen.value = false;
+};
+
+const toggleDesktopSearch = async () => {
+  desktopSearchOpen.value = !desktopSearchOpen.value;
+  if (desktopSearchOpen.value) {
+    await nextTick();
+    desktopSearchInput.value?.focus();
+  }
+};
+
+const closeDesktopSearch = () => {
+  desktopSearchOpen.value = false;
+};
+
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!(event.target instanceof Node)) {
+    return;
+  }
+  if (mobileSearchRef.value && !mobileSearchRef.value.contains(event.target)) {
+    closeMobileSearch();
+  }
+  if (
+    desktopSearchRef.value &&
+    !desktopSearchRef.value.contains(event.target)
+  ) {
+    closeDesktopSearch();
+  }
+};
+
+onMounted(() => {
+  fetchMe().catch(() => {});
+  syncTabWithHash();
+  window.addEventListener("hashchange", syncTabWithHash);
+  document.addEventListener("click", handleDocumentClick);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("hashchange", syncTabWithHash);
+  document.removeEventListener("click", handleDocumentClick);
+});
+</script>
 
 <style lang="scss">
 a {
@@ -213,7 +226,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .logo-mark {
@@ -233,7 +246,7 @@ a {
 .logo-text {
   font-size: 1.3rem;
   letter-spacing: -0.01em;
-  font-weight: 800;
+  font-weight: 600;
   color: #1d2f20;
 
   @media (min-width: 501px) {
@@ -415,7 +428,7 @@ a {
   box-shadow: 0 8px 20px rgba(33, 191, 86, 0.28);
   color: #187536;
   font-size: 1.45rem;
-  font-weight: 800;
+  font-weight: 600;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,

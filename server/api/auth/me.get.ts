@@ -15,5 +15,11 @@ export default defineEventHandler(async (event) => {
   if (!session) return { user: null };
   if (session.expiresAt <= new Date()) return { user: null };
 
-  return { user: { id: session.user.id, email: session.user.email } };
+  return {
+    user: {
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name,
+    },
+  };
 });
