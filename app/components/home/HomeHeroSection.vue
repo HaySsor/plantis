@@ -11,7 +11,8 @@
       <div class="hero-box">
         <h1>
           Podaruj roślinom
-          <span>drugie życie</span>
+
+          <span> drugie życie</span>
         </h1>
 
         <p class="description">
@@ -20,17 +21,22 @@
           duchu zero waste.
         </p>
 
-        <div class="buttons"></div>
+        <div class="buttons">
+          <VButton :is-button="true" type="primary">Przeglądaj rośliny</VButton>
+          <VButton :is-button="true" type="light"
+            >Jak to działa? <Icon name="mdi:arrow-right" class="button-icon"
+          /></VButton>
+        </div>
       </div>
 
       <div class="lottie-box">
         <Lottie
           link="/hero"
           background-color="transparent"
-          :width="600"
-          :height="600"
+          :width="500"
+          :height="500"
           :speed="1"
-          :loop="false"
+          :loop="true"
           :autoplay="true"
         />
       </div>
@@ -43,11 +49,21 @@
 <style lang="scss" scoped>
 .hero-container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
   min-height: calc(100svh - 68px - 80px);
   padding-block: 30px;
+  position: relative;
+
+  @media (min-width: 1200px) {
+    min-height: calc(100svh - 100px);
+  }
+}
+
+.hero-search {
+  width: 100%;
+  margin-top: 3.6rem;
 }
 
 .hero-grid {
@@ -89,6 +105,7 @@
 
   span {
     display: block;
+    position: relative;
     color: var(--green-main);
   }
 
@@ -110,22 +127,13 @@
   }
 }
 
-.cta {
-  margin-top: 1.5rem;
-  display: inline-block;
-  background: var(--green-main);
-  color: #ffffff;
-  font-size: 1.9rem;
-  font-weight: 600;
-  padding: 1.15rem 2rem;
-  border-radius: 12px;
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease;
-}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
 
-.cta:hover {
-  transform: translateY(-1px);
-  background: #6daf7d;
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 }
 </style>

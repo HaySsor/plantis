@@ -10,6 +10,7 @@
   --surface: #ffffff;
   --green-soft: #d9f0d7;
   --green-main: #7bbf8a;
+  --green-main-hover: #6bb07a;
   --green-dark: #315f3b;
   --text-main: #23442c;
   --text-muted: #53725b;

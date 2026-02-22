@@ -62,9 +62,14 @@
         />
       </div>
       <span class="divider" aria-hidden="true"></span>
-      <NuxtLink :to="user ? '/account' : '/auth/login'" class="login-btn">
-        <span>{{ user ? "Moje konto" : "Zaloguj się" }}</span>
-      </NuxtLink>
+      <VButton
+        customClass="nav-login-btn"
+        :is-button="true"
+        :href="user ? '/account' : '/auth/login'"
+        type="primary"
+      >
+        {{ user ? "Moje konto" : "Zaloguj się" }}
+      </VButton>
     </div>
   </header>
 
@@ -198,11 +203,6 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 .navbar {
   max-width: 1300px;
   margin: 0 auto;
@@ -213,10 +213,13 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 20px;
   box-shadow: 0 10px 28px rgba(61, 106, 72, 0.08);
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
+    position: sticky;
+    top: 1.2rem;
+    z-index: 40;
     justify-content: space-between;
     padding: 1.2rem 1.6rem;
   }
@@ -267,7 +270,7 @@ a {
   display: none;
   gap: 2rem;
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
     display: flex;
   }
 }
@@ -282,15 +285,26 @@ a {
     border-color 0.2s ease;
 }
 
+.nav-desktop a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--green-main);
+  text-underline-offset: 2px;
+}
+
 .desktop-actions {
   display: none;
   align-items: center;
   margin-left: auto;
   gap: 1rem;
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
     display: inline-flex;
   }
+}
+
+.desktop-actions .nav-login-btn.v-button {
+  padding: 12px 22px;
+  font-size: 1.5rem;
 }
 
 .mobile-search {
@@ -309,7 +323,7 @@ a {
     width 0.22s ease,
     padding 0.22s ease;
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
     display: none;
   }
 }
@@ -410,36 +424,6 @@ a {
   background: #d7ddd8;
 }
 
-.login-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 4rem;
-  padding: 0 1.8rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #d7f4dd, #d7f4dd);
-  color: #187536;
-  font-size: 1.45rem;
-  font-weight: 600;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
-}
-
-.login-btn svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  fill: currentColor;
-}
-
-.login-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(33, 191, 86, 0.34);
-  filter: brightness(1.03);
-}
-
 .bottom-nav {
   display: grid;
   position: fixed;
@@ -459,7 +443,7 @@ a {
   max-width: 400px;
   margin: 0 auto;
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
     display: none;
   }
 }
