@@ -32,9 +32,9 @@
     </div>
 
     <nav class="nav-desktop" aria-label="Główne menu">
-      <a href="#jak-to-dziala">Jak to działa</a>
-      <a href="#spolecznosc">Społeczność</a>
-      <a href="#o-nas">O nas</a>
+      <NuxtLink to="#jak-to-dziala">Jak to działa</NuxtLink>
+      <NuxtLink to="#spolecznosc">Społeczność</NuxtLink>
+      <NuxtLink to="#o-nas">O nas</NuxtLink>
     </nav>
 
     <div class="desktop-actions">
@@ -277,15 +277,9 @@ a {
   font-weight: 600;
   font-size: 1.5rem;
   color: #4f5e55;
-  border-bottom: 2px solid transparent;
   transition:
     color 0.2s ease,
     border-color 0.2s ease;
-}
-
-.nav-desktop a:hover {
-  color: #263c2e;
-  border-bottom-color: #57c57a;
 }
 
 .desktop-actions {
@@ -500,6 +494,5 @@ a {
 .bottom-link:hover {
   background: var(--green-soft);
   color: var(--green-dark);
-  transform: translateY(-1px);
 }
 </style>

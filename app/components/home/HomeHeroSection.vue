@@ -30,7 +30,7 @@
           :width="600"
           :height="600"
           :speed="1"
-          :loop="true"
+          :loop="false"
           :autoplay="true"
         />
       </div>
