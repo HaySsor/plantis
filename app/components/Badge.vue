@@ -1,16 +1,12 @@
 <template>
-  <div class="badge">
-    <Icon
-      :name="icon"
-      :class="['badge-icon', { 'badge-icon--uppercase': isUppercase }]"
-      v-if="icon"
-    />
+  <div :class="['badge', { 'badge--uppercase': isUppercase }]">
+    <Icon :name="icon" class="badge-icon" v-if="icon" />
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+const { color, textColor, icon, isUppercase } = defineProps({
   color: {
     type: String,
     default: "",
@@ -41,11 +37,19 @@ const props = defineProps({
   font-weight: 600;
   color: v-bind(textColor);
   background-color: v-bind(color);
+
+  @media (min-width: 768px) {
+    font-size: 1.4rem;
+  }
 }
-.badge-icon--uppercase {
+.badge--uppercase {
   text-transform: uppercase;
 }
 .badge-icon {
   font-size: 1.6rem;
+
+  @media (min-width: 768px) {
+    font-size: 2rem;
+  }
 }
 </style>

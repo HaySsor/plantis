@@ -249,11 +249,11 @@ a {
   font-weight: 600;
   color: #1d2f20;
 
-  @media (min-width: 501px) {
-    font-size: 1.6rem;
+  @media (min-width: 768px) {
+    font-size: 2.2rem;
   }
 
-  @media (min-width: 1001px) {
+  @media (min-width: 1200px) {
     display: inline;
     font-size: 2.1rem;
   }
@@ -374,7 +374,7 @@ a {
 }
 
 .desktop-search.is-open {
-  width: min(24vw, 18rem);
+  width: min(24vw, 180rem);
   padding: 0.45rem 0.65rem;
   gap: 0.45rem;
 }
@@ -424,8 +424,7 @@ a {
   min-height: 4rem;
   padding: 0 1.8rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #d7f4dd, #2fd063);
-  box-shadow: 0 8px 20px rgba(33, 191, 86, 0.28);
+  background: linear-gradient(135deg, #d7f4dd, #d7f4dd);
   color: #187536;
   font-size: 1.45rem;
   font-weight: 600;
