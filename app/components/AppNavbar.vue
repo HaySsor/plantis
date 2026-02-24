@@ -2,9 +2,13 @@
   <header class="navbar">
     <NuxtLink to="/" class="logo">
       <span class="logo-mark">
-        <Icon name="mdi:leaf" class="logo-mark-icon" />
+        <img
+          src="/logo.png"
+          alt="Logo Zielona Przesadzka"
+          class="logo-mark-icon"
+        />
       </span>
-      <span class="logo-text">Zielona<span>Przesiadka</span></span>
+      <span class="logo-text">Zielona<span>Przesadzka</span></span>
     </NuxtLink>
 
     <div
@@ -64,7 +68,7 @@
       <span class="divider" aria-hidden="true"></span>
       <VButton
         customClass="nav-login-btn"
-        :is-button="true"
+        :is-button="false"
         :href="user ? '/account' : '/auth/login'"
         type="primary"
       >
@@ -206,7 +210,7 @@ onUnmounted(() => {
 .navbar {
   max-width: 1300px;
   margin: 0 auto;
-  background: #f8fffa;
+  background: white;
   border: 1px solid #d5ead9;
   border-radius: 22px;
   padding: 1rem 1.35rem;
@@ -242,8 +246,8 @@ onUnmounted(() => {
 }
 
 .logo-mark-icon {
-  font-size: 3rem;
-  color: #2fd063;
+  width: 100%;
+  height: 100%;
 }
 
 .logo-text {

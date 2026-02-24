@@ -31,10 +31,10 @@
 
       <div class="lottie-box">
         <Lottie
-          link="/hero"
+          link="/hero.json"
           background-color="transparent"
-          :width="500"
-          :height="500"
+          :width="600"
+          :height="600"
           :speed="1"
           :loop="true"
           :autoplay="true"

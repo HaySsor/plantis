@@ -11,12 +11,17 @@
       </label>
 
       <label class="search-field">
-        <Icon name="mdi:map-marker-outline" class="search-icon" />
+        <Icon name="mdi:map-marker" class="search-icon" />
         <input v-model="location" type="text" placeholder="Twoja lokalizacja" />
       </label>
     </div>
 
-    <VButton class="search-submit" :is-button="false" type="dark">
+    <VButton
+      class="search-submit"
+      :is-button="true"
+      type="dark"
+      button-type="submit"
+    >
       {{ buttonLabel }}
     </VButton>
   </form>
@@ -72,7 +77,7 @@ async function handleSubmit() {
 .listing-search-bar {
   background: #ffffff;
   border-radius: 25px;
-  padding: 1.2rem;
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -91,6 +96,7 @@ async function handleSubmit() {
     max-width: 1100px;
     flex-direction: row;
     flex-wrap: nowrap;
+    padding: 10px;
   }
 }
 
@@ -142,7 +148,7 @@ async function handleSubmit() {
   color: #9ba9a2;
 }
 .listing-search-bar .search-submit {
-  padding: 10px 40px;
+  padding: 15px 40px;
   margin-top: 5px;
 
   @media (min-width: 1200px) {

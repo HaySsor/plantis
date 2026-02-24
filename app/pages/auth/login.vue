@@ -1,39 +1,61 @@
 <template>
-  <main class="auth-page">
-    <section class="auth-card">
-      <h1>Logowanie</h1>
+  <AuthPageShell
+    title="Witamy z ponownie"
+    subtitle="Zaloguj się, zarządzać swoimi roślinami"
+    image-alt="Login image"
+    @submit="onSubmit"
+  >
+    <p v-if="errorMessage" class="form-error-message">{{ errorMessage }}</p>
 
-      <form v-if="!user" class="auth-form" @submit.prevent="onSubmit">
-        <label>
-          Email
-          <input v-model="form.email" type="email" required />
-        </label>
+    <AuthInputBox
+      id="email"
+      label="Email"
+      type="email"
+      icon="mdi:email"
+      placeholder="Wprowadź swój email"
+      autocomplete="email"
+      v-model="form.email"
+      :disabled="loading"
+      :required="true"
+    />
+    <AuthInputBox
+      id="password"
+      label="Hasło"
+      type="password"
+      icon="mdi:lock"
+      placeholder="Wprowadź swoje hasło"
+      autocomplete="current-password"
+      v-model="form.password"
+      :disabled="loading"
+      :required="true"
+    >
+      <template #top>
+        <NuxtLink to="/auth/forgot-password" class="input-link"
+          >Zapomniałeś hasła?</NuxtLink
+        >
+      </template>
+    </AuthInputBox>
 
-        <label>
-          Hasło
-          <input v-model="form.password" type="password" required />
-        </label>
+    <VButton
+      :loading="loading"
+      type="primary"
+      :isButton="true"
+      button-type="submit"
+      :disabled="loading"
+      custom-class="form-button"
+    >
+      Zaloguj się
+    </VButton>
 
-        <button type="submit" :disabled="loading">
-          {{ loading ? "Logowanie..." : "Zaloguj się" }}
-        </button>
-
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-        <p class="register-hint">
-          Nie masz konta?
-          <NuxtLink to="/auth/register">Zarejestruj się</NuxtLink>
-        </p>
-      </form>
-
-      <div v-else class="logged-view">
-        <p>Zalogowany użytkownik:</p>
-        <strong>{{ user.email }}</strong>
-        <button type="button" @click="onLogout" :disabled="loading">
-          {{ loading ? "Wylogowywanie..." : "Wyloguj się" }}
-        </button>
+    <template #footer>
+      <div class="auth-reg-box">
+        <span>Nie masz konta?</span>
+        <NuxtLink to="/auth/register" class="input-link"
+          >Zarejestruj się</NuxtLink
+        >
       </div>
-    </section>
-  </main>
+    </template>
+  </AuthPageShell>
 </template>
 
 <script setup lang="ts">
@@ -44,114 +66,48 @@ const form = reactive({
 
 const errorMessage = ref<string | null>(null);
 
-const { user, login, logout, loading } = useAuth();
+const { login, loading } = useAuth();
+
+function getLoginErrorMessage(err: any) {
+  const raw = err?.data?.message || err?.data?.statusMessage || "";
+
+  if (raw === "Email and password are required") {
+    return "Podaj adres e-mail i hasło.";
+  }
+
+  if (raw === "Invalid credentials") {
+    return "Niepoprawny e-mail lub hasło.";
+  }
+
+  return "Logowanie nie powiodło się. Spróbuj ponownie.";
+}
 
 async function onSubmit() {
+  if (loading.value) {
+    return;
+  }
+
   errorMessage.value = null;
 
   try {
     await login(form.email, form.password);
     await navigateTo("/account");
   } catch (err: any) {
-    errorMessage.value =
-      err?.data?.message ||
-      err?.data?.statusMessage ||
-      "Logowanie nie powiodło się";
+    errorMessage.value = getLoginErrorMessage(err);
   }
-}
-
-async function onLogout() {
-  await logout();
 }
 </script>
 
-<style lang="scss" scoped>
-.auth-page {
-  display: grid;
-  place-items: center;
+<style scoped lang="scss">
+.form-error-message {
+  color: lightcoral;
+  font-size: 13px;
+  margin-bottom: -4px;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  padding: 2.4rem;
-  border-radius: 1.6rem;
-  border: 1px solid var(--border-soft);
-  background: #ffffff;
-}
-
-h1 {
-  margin: 0 0 1.6rem;
-  font-size: 2.8rem;
-  color: var(--green-dark);
-}
-
-.auth-form {
-  display: grid;
-  gap: 1.2rem;
-}
-
-label {
-  display: grid;
-  gap: 0.6rem;
-  font-size: 1.4rem;
-  color: var(--text-muted);
-}
-
-input {
-  border: 1px solid var(--border-soft);
-  border-radius: 1rem;
-  padding: 1rem 1.2rem;
-  font-size: 1.6rem;
-  color: var(--text-main);
-}
-
-button {
-  border: 0;
-  border-radius: 1rem;
-  padding: 1rem 1.2rem;
-  background: var(--green-main);
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.error {
-  margin: 0;
-  color: #b33a3a;
-  font-size: 1.4rem;
-}
-
-.register-hint {
-  margin: 0;
-  font-size: 1.4rem;
-  color: var(--text-muted);
-}
-
-.register-hint a {
-  color: var(--green-dark);
-  font-weight: 600;
-}
-
-.logged-view {
-  display: grid;
-  gap: 1rem;
-  font-size: 1.6rem;
-  color: var(--text-main);
-}
-
-.logged-view p {
-  margin: 0;
-  color: var(--text-muted);
-}
-
-.logged-view strong {
-  word-break: break-all;
+.form-button {
+  @media (min-width: 768px) {
+    padding: 15px 40px;
+  }
 }
 </style>

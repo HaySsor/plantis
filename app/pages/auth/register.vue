@@ -1,37 +1,66 @@
 <template>
-  <main class="auth-page">
-    <section class="auth-card">
-      <h1>Rejestracja</h1>
+  <AuthPageShell
+    title="Utwórz konto"
+    subtitle="Załóż konto i zacznij oddawać rośliny"
+    image-alt="Register image"
+    @submit="onSubmit"
+  >
+    <p v-if="errorMessage" class="form-error-message">{{ errorMessage }}</p>
 
-      <form class="auth-form" @submit.prevent="onSubmit">
-        <label>
-          Imię
-          <input v-model="form.name" type="text" minlength="2" required />
-        </label>
+    <AuthInputBox
+      id="name"
+      label="Imię"
+      type="text"
+      icon="mdi:account-outline"
+      placeholder="Wprowadź swoje imię"
+      autocomplete="name"
+      v-model="form.name"
+      :disabled="loading"
+      :required="true"
+    />
 
-        <label>
-          Email
-          <input v-model="form.email" type="email" required />
-        </label>
+    <AuthInputBox
+      id="email"
+      label="Email"
+      type="email"
+      icon="mdi:email"
+      placeholder="Wprowadź swój email"
+      autocomplete="email"
+      v-model="form.email"
+      :disabled="loading"
+      :required="true"
+    />
 
-        <label>
-          Hasło
-          <input
-            v-model="form.password"
-            type="password"
-            minlength="8"
-            required
-          />
-        </label>
+    <AuthInputBox
+      id="password"
+      label="Hasło"
+      type="password"
+      icon="mdi:lock"
+      placeholder="Wprowadź swoje hasło"
+      autocomplete="new-password"
+      v-model="form.password"
+      :disabled="loading"
+      :required="true"
+    />
 
-        <button type="submit" :disabled="loading">
-          {{ loading ? "Tworzenie konta..." : "Utwórz konto" }}
-        </button>
+    <VButton
+      :loading="loading"
+      type="primary"
+      :isButton="true"
+      button-type="submit"
+      :disabled="loading"
+      custom-class="form-button"
+    >
+      Utwórz konto
+    </VButton>
 
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      </form>
-    </section>
-  </main>
+    <template #footer>
+      <div class="auth-reg-box">
+        <span>Masz już konto?</span>
+        <NuxtLink to="/auth/login" class="input-link">Zaloguj się</NuxtLink>
+      </div>
+    </template>
+  </AuthPageShell>
 </template>
 
 <script setup lang="ts">
@@ -44,7 +73,33 @@ const form = reactive({
 const loading = ref(false);
 const errorMessage = ref<string | null>(null);
 
+function getRegisterErrorMessage(err: any) {
+  const raw = err?.data?.message || err?.data?.statusMessage || "";
+
+  if (raw === "Name, email and password are required") {
+    return "Uzupełnij imię, e-mail i hasło.";
+  }
+
+  if (raw === "Name must be at least 2 characters") {
+    return "Imię musi mieć co najmniej 2 znaki.";
+  }
+
+  if (raw === "Password must be at least 8 characters") {
+    return "Hasło musi mieć co najmniej 8 znaków.";
+  }
+
+  if (raw === "User already exists") {
+    return "Konto z tym adresem e-mail już istnieje.";
+  }
+
+  return "Rejestracja nie powiodła się. Spróbuj ponownie.";
+}
+
 async function onSubmit() {
+  if (loading.value) {
+    return;
+  }
+
   errorMessage.value = null;
   loading.value = true;
 
@@ -60,76 +115,23 @@ async function onSubmit() {
 
     await navigateTo("/account");
   } catch (err: any) {
-    errorMessage.value =
-      err?.data?.message ||
-      err?.data?.statusMessage ||
-      "Rejestracja nie powiodła się";
+    errorMessage.value = getRegisterErrorMessage(err);
   } finally {
     loading.value = false;
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.auth-page {
-  display: grid;
-  place-items: center;
+<style scoped lang="scss">
+.form-error-message {
+  color: lightcoral;
+  font-size: 13px;
+  margin-bottom: -4px;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  padding: 2.4rem;
-  border-radius: 1.6rem;
-  border: 1px solid var(--border-soft);
-  background: #ffffff;
-}
-
-h1 {
-  margin: 0 0 1.6rem;
-  font-size: 2.8rem;
-  color: var(--green-dark);
-}
-
-.auth-form {
-  display: grid;
-  gap: 1.2rem;
-}
-
-label {
-  display: grid;
-  gap: 0.6rem;
-  font-size: 1.4rem;
-  color: var(--text-muted);
-}
-
-input {
-  border: 1px solid var(--border-soft);
-  border-radius: 1rem;
-  padding: 1rem 1.2rem;
-  font-size: 1.6rem;
-  color: var(--text-main);
-}
-
-button {
-  border: 0;
-  border-radius: 1rem;
-  padding: 1rem 1.2rem;
-  background: var(--green-main);
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.error {
-  margin: 0;
-  color: #b33a3a;
-  font-size: 1.4rem;
+.form-button {
+  @media (min-width: 768px) {
+    padding: 15px 40px;
+  }
 }
 </style>
