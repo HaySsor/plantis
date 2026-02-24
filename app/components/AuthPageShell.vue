@@ -42,7 +42,7 @@ withDefaults(
   {
     imageSrc: "/login-img.png",
     imageAlt: "Auth image",
-  }
+  },
 );
 </script>
 
@@ -127,6 +127,7 @@ withDefaults(
 
   @media (min-width: 768px) {
     padding: 40px;
+    gap: 30px;
   }
 }
 
