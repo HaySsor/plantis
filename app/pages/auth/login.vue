@@ -2,50 +2,57 @@
   <AuthPageShell
     title="Witamy z ponownie"
     subtitle="Zaloguj się, zarządzać swoimi roślinami"
-    image-alt="Login image"
     @submit="onSubmit"
+    :isLoginPage="true"
   >
-    <p v-if="errorMessage" class="form-error-message">{{ errorMessage }}</p>
+    <template #auth-left-side>
+      <div class="auth-image-side">
+        <img src="/login-img.png" alt="Auth image" class="side-image" />
+      </div>
+    </template>
+    <template #default>
+      <p v-if="errorMessage" class="form-error-message">{{ errorMessage }}</p>
 
-    <AuthInputBox
-      id="email"
-      label="Email"
-      type="email"
-      icon="mdi:email"
-      placeholder="Wprowadź swój email"
-      autocomplete="email"
-      v-model="form.email"
-      :disabled="loading"
-      :required="true"
-    />
-    <AuthInputBox
-      id="password"
-      label="Hasło"
-      type="password"
-      icon="mdi:lock"
-      placeholder="Wprowadź swoje hasło"
-      autocomplete="current-password"
-      v-model="form.password"
-      :disabled="loading"
-      :required="true"
-    >
-      <template #top>
-        <NuxtLink to="/auth/forgot-password" class="input-link"
-          >Zapomniałeś hasła?</NuxtLink
-        >
-      </template>
-    </AuthInputBox>
+      <AuthInputBox
+        id="email"
+        label="Email"
+        type="email"
+        icon="mdi:email"
+        placeholder="Wprowadź swój email"
+        autocomplete="email"
+        v-model="form.email"
+        :disabled="loading"
+        :required="true"
+      />
+      <AuthInputBox
+        id="password"
+        label="Hasło"
+        type="password"
+        icon="mdi:lock"
+        placeholder="Wprowadź swoje hasło"
+        autocomplete="current-password"
+        v-model="form.password"
+        :disabled="loading"
+        :required="true"
+      >
+        <template #top>
+          <NuxtLink to="/auth/forgot-password" class="input-link"
+            >Zapomniałeś hasła?</NuxtLink
+          >
+        </template>
+      </AuthInputBox>
 
-    <VButton
-      :loading="loading"
-      type="primary"
-      :isButton="true"
-      button-type="submit"
-      :disabled="loading"
-      custom-class="form-button"
-    >
-      Zaloguj się
-    </VButton>
+      <VButton
+        :loading="loading"
+        type="primary"
+        :isButton="true"
+        button-type="submit"
+        :disabled="loading"
+        custom-class="form-button"
+      >
+        Zaloguj się
+      </VButton>
+    </template>
 
     <template #footer>
       <div class="auth-reg-box">
@@ -99,6 +106,25 @@ async function onSubmit() {
 </script>
 
 <style scoped lang="scss">
+.auth-image-side {
+  display: none;
+  @media (min-width: 768px) {
+    max-height: calc(100svh - 120px);
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+  }
+}
+
+.side-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
 .form-error-message {
   color: lightcoral;
   font-size: 13px;

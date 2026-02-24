@@ -253,8 +253,9 @@ onUnmounted(() => {
 .logo-text {
   font-size: 1.3rem;
   letter-spacing: -0.01em;
-  font-weight: 600;
+  font-weight: 800;
   color: #1d2f20;
+  font-family: var(--font-title);
 
   @media (min-width: 768px) {
     font-size: 2.2rem;

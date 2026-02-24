@@ -33,8 +33,6 @@
         <Lottie
           link="/hero.json"
           background-color="transparent"
-          :width="600"
-          :height="600"
           :speed="1"
           :loop="true"
           :autoplay="true"
@@ -77,7 +75,7 @@
 }
 
 .lottie-box {
-  display: none;
+  display: block;
 
   @media (min-width: 1200px) {
     display: block;

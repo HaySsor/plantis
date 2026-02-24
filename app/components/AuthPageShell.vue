@@ -1,8 +1,6 @@
 <template>
-  <main class="auth-page">
-    <div class="auth-image-side">
-      <img :src="imageSrc" :alt="imageAlt" class="side-image" />
-    </div>
+  <main class="auth-page" :class="{ 'is-login-page': isLoginPage }">
+    <slot name="auth-left-side"> </slot>
 
     <div class="auth-form-side">
       <Icon name="mdi:leaf" width="40" height="40" class="form-icon" />
@@ -36,48 +34,37 @@ withDefaults(
   defineProps<{
     title: string;
     subtitle: string;
-    imageSrc?: string;
-    imageAlt?: string;
+    isLoginPage?: boolean;
   }>(),
   {
-    imageSrc: "/login-img.png",
-    imageAlt: "Auth image",
+    isLoginPage: false,
   },
 );
 </script>
 
 <style scoped lang="scss">
 .auth-page {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   min-height: 78svh;
-  padding: 0 20px;
+  gap: 20px;
+  padding-bottom: 30px;
 
   @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
+    display: grid;
+    grid-template-columns: 1.5fr minmax(400px, 1fr);
     gap: 40px;
     min-height: calc(100svh - 100px);
+    align-items: center;
+    justify-content: center;
   }
 }
 
-.auth-image-side {
-  display: none;
-
+.is-login-page {
   @media (min-width: 768px) {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    max-height: calc(100svh - 120px);
+    grid-template-columns: 1fr minmax(400px, 1fr);
   }
-}
-
-.side-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: inherit;
 }
 
 .auth-form-side {
