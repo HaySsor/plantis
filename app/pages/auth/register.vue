@@ -46,6 +46,19 @@
               <p>Poznaj pasjonatów roślin w Twojej najbliższej okolicy.</p>
             </div>
           </li>
+
+          <li class="benefit-item">
+            <span class="benefit-check">
+              <Icon name="mdi:check" />
+            </span>
+            <div>
+              <h3>Bezpieczny kontakt</h3>
+              <p>
+                Umawiaj odbiór roślin wygodnie i bezpiecznie przez naszą
+                platformę.
+              </p>
+            </div>
+          </li>
         </ul>
 
         <div class="register-opinion">
@@ -196,6 +209,7 @@ async function onSubmit() {
   @media (min-width: 1200px) {
     padding: 44px 34px;
     gap: 38px;
+    margin: 0 auto;
   }
 }
 
@@ -266,7 +280,7 @@ async function onSubmit() {
 
 .register-opinion {
   border-top: 1px solid #dbe6de;
-  padding-top: 26px;
+  padding-top: 10px;
   display: flex;
   align-items: center;
   gap: 14px;

@@ -100,11 +100,10 @@ withDefaults(
 }
 
 .form-container {
-  box-shadow: 0 10px 24px rgba(123, 191, 138, 0.34);
   width: 100%;
   min-height: 400px;
   border-radius: 25px;
-  background-color: white;
+
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -115,6 +114,8 @@ withDefaults(
   @media (min-width: 768px) {
     padding: 40px;
     gap: 30px;
+    box-shadow: 0 10px 24px rgba(123, 191, 138, 0.34);
+    background-color: white;
   }
 }
 

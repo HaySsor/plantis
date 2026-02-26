@@ -7,7 +7,16 @@
   >
     <template #auth-left-side>
       <div class="auth-image-side">
-        <img src="/login-img.png" alt="Auth image" class="side-image" />
+        <img
+          :src="loginMobileSrc"
+          alt="Auth image"
+          class="side-image side-image-mobile"
+        />
+        <img
+          :src="loginDesktopSrc"
+          alt="Auth image"
+          class="side-image side-image-desktop"
+        />
       </div>
     </template>
     <template #default>
@@ -71,6 +80,9 @@ const form = reactive({
   password: "",
 });
 
+const loginMobileSrc = "/login-mobile.png";
+const loginDesktopSrc = "/login-transparent.png";
+
 const errorMessage = ref<string | null>(null);
 
 const { login, loading } = useAuth();
@@ -107,7 +119,8 @@ async function onSubmit() {
 
 <style scoped lang="scss">
 .auth-image-side {
-  display: none;
+  display: block;
+  height: 200px;
   @media (min-width: 768px) {
     max-height: calc(100svh - 120px);
     display: block;
@@ -123,6 +136,20 @@ async function onSubmit() {
   height: 100%;
   object-fit: contain;
   border-radius: inherit;
+}
+
+.side-image-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .side-image-mobile {
+    display: none;
+  }
+
+  .side-image-desktop {
+    display: block;
+  }
 }
 
 .form-error-message {
