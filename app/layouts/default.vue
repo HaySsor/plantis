@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppNavbar from "~/components/AppNavbar.vue";
+import AppFooter from "~/components/AppFooter.vue";
 </script>
 
 <template>
@@ -9,16 +10,17 @@ import AppNavbar from "~/components/AppNavbar.vue";
       <NuxtPage />
     </div>
   </div>
+  <AppFooter />
 </template>
 
 <style lang="scss">
 .app-shell {
   min-height: 100vh;
   padding: 1.25rem;
-  padding-bottom: 7.2rem;
+  padding-bottom: 9.2rem;
 
   @media (min-width: 1001px) {
-    padding-bottom: 1.25rem;
+    padding-bottom: 0;
   }
 }
 

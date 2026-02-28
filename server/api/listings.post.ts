@@ -1,47 +1,43 @@
 import { prisma } from "../utils/prisma";
+import { requireUser } from "../utils/requireUser";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
+  const user = await requireUser(event);
+  const body = await readBody(event);
 
-  const page = Math.max(1, Number(query.page ?? 1));
-  const pageSize = Math.min(50, Math.max(1, Number(query.pageSize ?? 12)));
+  const { title, description, city, type, deliveryMode } = body ?? {};
 
-  const city = typeof query.city === "string" ? query.city.trim() : undefined;
-  const type = typeof query.type === "string" ? query.type : undefined;
+  if (!title || typeof title !== "string" || title.trim().length < 3) {
+    throw createError({ statusCode: 400, statusMessage: "Tytuł musi mieć co najmniej 3 znaki" });
+  }
+  if (!description || typeof description !== "string" || description.trim().length < 10) {
+    throw createError({ statusCode: 400, statusMessage: "Opis musi mieć co najmniej 10 znaków" });
+  }
+  if (!city || typeof city !== "string" || city.trim().length < 2) {
+    throw createError({ statusCode: 400, statusMessage: "Podaj miasto odbioru" });
+  }
 
-  const where: any = {
-    status: "ACTIVE",
-  };
+  const validTypes = ["PLANT", "CUTTING", "LEAF", "SEEDS"];
+  if (!type || !validTypes.includes(type)) {
+    throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy typ ogłoszenia" });
+  }
 
-  if (city) where.city = { equals: city, mode: "insensitive" };
-  if (type) where.type = type;
+  const validDeliveryModes = ["PICKUP", "SHIPPING", "BOTH"];
+  if (!deliveryMode || !validDeliveryModes.includes(deliveryMode)) {
+    throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy sposób przekazania" });
+  }
 
-  const [items, total] = await Promise.all([
-    prisma.listing.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      select: {
-        id: true,
-        title: true,
-        city: true,
-        type: true,
-        deliveryMode: true,
-        createdAt: true,
-        images: {
-          select: { url: true, order: true },
-          orderBy: { order: "asc" },
-        },
-      },
-    }),
-    prisma.listing.count({ where }),
-  ]);
+  const listing = await prisma.listing.create({
+    data: {
+      userId: user.id,
+      title: title.trim(),
+      description: description.trim(),
+      city: city.trim(),
+      type,
+      deliveryMode,
+      status: "ACTIVE",
+    },
+  });
 
-  return {
-    page,
-    pageSize,
-    total,
-    items,
-  };
+  return { listing };
 });

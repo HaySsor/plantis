@@ -8,11 +8,13 @@ export default defineEventHandler(async (event) => {
 
   const city = typeof query.city === "string" ? query.city.trim() : undefined;
   const type = typeof query.type === "string" ? query.type : undefined;
+  const q = typeof query.q === "string" ? query.q.trim() : undefined;
 
   const where: any = { status: "ACTIVE" };
 
-  if (city) where.city = { equals: city, mode: "insensitive" };
+  if (city) where.city = { contains: city, mode: "insensitive" };
   if (type) where.type = type;
+  if (q) where.title = { contains: q, mode: "insensitive" };
 
   const [items, total] = await Promise.all([
     prisma.listing.findMany({

@@ -38,11 +38,15 @@ const props = withDefaults(
     buttonLabel?: string;
     navigateOnSubmit?: boolean;
     navigateToPath?: string;
+    initialQuery?: string;
+    initialLocation?: string;
   }>(),
   {
     buttonLabel: "Znajdź roślinę",
     navigateOnSubmit: false,
     navigateToPath: "/listings",
+    initialQuery: "",
+    initialLocation: "",
   },
 );
 
@@ -50,8 +54,8 @@ const emit = defineEmits<{
   submit: [payload: SearchPayload];
 }>();
 
-const query = ref("");
-const location = ref("");
+const query = ref(props.initialQuery);
+const location = ref(props.initialLocation);
 
 async function handleSubmit() {
   const payload = {
@@ -66,7 +70,7 @@ async function handleSubmit() {
       path: props.navigateToPath,
       query: {
         q: payload.query || undefined,
-        location: payload.location || undefined,
+        city: payload.location || undefined,
       },
     });
   }
@@ -86,10 +90,10 @@ async function handleSubmit() {
   align-items: center;
   max-width: 500px;
   margin: 0 auto;
-  width: 90%;
 
   @media (min-width: 768px) {
     max-width: 700px;
+    width: 90%;
   }
 
   @media (min-width: 1200px) {

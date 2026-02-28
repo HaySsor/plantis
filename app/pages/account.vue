@@ -1,26 +1,45 @@
 <template>
   <main class="account-page">
-    <section class="account-card">
-      <h1>Moje konto</h1>
+    <div v-if="loading" class="state-text">Ładowanie konta...</div>
 
-      <div v-if="loading" class="state-text">Ładowanie konta...</div>
+    <template v-else-if="user">
+      <section class="account-card">
+        <div class="account-avatar">
+          <Icon name="mdi:account-circle" />
+        </div>
 
-      <div v-else-if="user" class="account-content">
-        <p>Imię:</p>
-        <strong>{{ user.name || "Brak imienia" }}</strong>
+        <div class="account-info">
+          <p class="account-name">{{ user.name }}</p>
+          <p class="account-email">{{ user.email }}</p>
+        </div>
 
-        <p>E-mail:</p>
-        <strong>{{ user.email }}</strong>
+        <div class="account-actions">
+          <VButton
+            :is-button="false"
+            type="secondary"
+            href="/listings/add"
+          >
+            <Icon name="mdi:plus" />
+            Dodaj ogłoszenie
+          </VButton>
 
-        <button type="button" @click="onLogout" :disabled="loading">
-          {{ loading ? "Wylogowywanie..." : "Wyloguj się" }}
-        </button>
-      </div>
+          <VButton
+            :is-button="true"
+            type="light"
+            :loading="loading"
+            @click="onLogout"
+          >
+            Wyloguj się
+          </VButton>
+        </div>
+      </section>
+    </template>
 
-      <div v-else class="account-content">
-        <p>Nie jesteś zalogowany.</p>
-        <NuxtLink to="/auth/login">Przejdź do logowania</NuxtLink>
-      </div>
+    <section v-else class="account-card">
+      <p class="state-text">Nie jesteś zalogowany.</p>
+      <VButton :is-button="false" type="primary" href="/auth/login">
+        Przejdź do logowania
+      </VButton>
     </section>
   </main>
 </template>
@@ -48,58 +67,50 @@ async function onLogout() {
 .account-card {
   width: 100%;
   max-width: 480px;
-  padding: 2.4rem;
-  border-radius: 1.6rem;
+  padding: 3.2rem 2.4rem;
+  border-radius: 2rem;
   border: 1px solid var(--border-soft);
-  background: #ffffff;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
 
-h1 {
-  margin: 0 0 1.6rem;
-  font-size: 2.8rem;
+.account-avatar {
+  font-size: 7.2rem;
+  color: var(--green-main);
+  line-height: 1;
+}
+
+.account-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.account-name {
+  font-size: 2.2rem;
+  font-family: var(--font-title);
+  font-weight: 700;
   color: var(--green-dark);
+}
+
+.account-email {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.account-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .state-text {
   font-size: 1.6rem;
   color: var(--text-muted);
-}
-
-.account-content {
-  display: grid;
-  gap: 0.8rem;
-  font-size: 1.6rem;
-  color: var(--text-main);
-}
-
-.account-content p {
-  margin: 0;
-  color: var(--text-muted);
-}
-
-.account-content strong {
-  word-break: break-all;
-}
-
-button {
-  margin-top: 1rem;
-  border: 0;
-  border-radius: 1rem;
-  padding: 1rem 1.2rem;
-  background: var(--green-main);
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-a {
-  color: var(--green-dark);
-  font-weight: 600;
 }
 </style>

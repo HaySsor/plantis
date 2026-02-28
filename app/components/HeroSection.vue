@@ -1,48 +1,60 @@
 <template>
-  <section class="hero-container">
+  <section
+    class="hero-container"
+    :class="[{ 'is-centered': !showMedia }, customClass]"
+  >
     <Badge
+      v-if="badge"
       color="#d9f0d7"
       text-color="#7bbf8a"
       :is-uppercase="true"
       icon="mdi-leaf"
-      >Dołącz do eko-rewolucji</Badge
+      >{{ badge }}</Badge
     >
+
     <div class="hero-grid">
       <div class="hero-box">
         <h1>
-          Podaruj roślinom
-
-          <span> drugie życie</span>
+          {{ title }}
+          <span v-if="titleHighlight">{{ titleHighlight }}</span>
         </h1>
 
-        <p class="description">
-          Zielona Przesiadka to przestrzeń stworzona dla miłośników natury.
-          Wymieniaj, oddawaj i znajduj nowe rośliny do swojej domowej dżungli w
-          duchu zero waste.
-        </p>
+        <p v-if="description" class="description">{{ description }}</p>
 
-        <div class="buttons">
-          <VButton :is-button="true" type="primary">Przeglądaj rośliny</VButton>
-          <VButton :is-button="true" type="light"
-            >Jak to działa? <Icon name="mdi:arrow-right" class="button-icon"
-          /></VButton>
+        <div v-if="$slots.buttons" class="buttons">
+          <slot name="buttons" />
         </div>
       </div>
 
-      <div class="lottie-box">
+      <div v-if="showMedia" class="lottie-box">
         <Lottie
           link="/hero.json"
           background-color="transparent"
-          :speed="1"
+          :speed="0.6"
           :loop="true"
           :autoplay="true"
+          direction="alternate"
         />
       </div>
     </div>
   </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    badge?: string;
+    title: string;
+    titleHighlight?: string;
+    description?: string;
+    showMedia?: boolean;
+    customClass?: string;
+  }>(),
+  {
+    showMedia: true,
+  },
+);
+</script>
 
 <style lang="scss" scoped>
 .hero-container {
@@ -57,11 +69,25 @@
   @media (min-width: 1200px) {
     min-height: calc(100svh - 100px);
   }
-}
 
-.hero-search {
-  width: 100%;
-  margin-top: 3.6rem;
+  &.is-centered {
+    min-height: auto;
+    padding-block: 6rem;
+
+    .hero-box {
+      align-items: center;
+      text-align: center;
+    }
+
+    .description {
+      text-align: center;
+    }
+
+    .hero-grid {
+      display: flex;
+      justify-content: center;
+    }
+  }
 }
 
 .hero-grid {
@@ -76,10 +102,6 @@
 
 .lottie-box {
   display: block;
-
-  @media (min-width: 1200px) {
-    display: block;
-  }
 }
 
 .hero-box {
@@ -88,6 +110,10 @@
   flex-direction: column;
   align-items: center;
   gap: 32px;
+
+  .is-centered & {
+    margin-top: 0;
+  }
 }
 
 .hero-container h1 {
@@ -112,13 +138,14 @@
     line-height: 82px;
   }
 }
+
 .description {
   font-size: 1.6rem;
   color: var(--gray-text);
   text-align: center;
   max-width: 661px;
   line-height: 20px;
-  letter-spacing: 0px;
+
   @media (min-width: 768px) {
     font-size: 2rem;
     line-height: 28px;
@@ -129,9 +156,5 @@
   display: flex;
   flex-direction: row;
   gap: 16px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
 }
 </style>

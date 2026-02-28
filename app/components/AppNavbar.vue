@@ -36,8 +36,8 @@
     </div>
 
     <nav class="nav-desktop" aria-label="Główne menu">
-      <NuxtLink to="#jak-to-dziala">Jak to działa</NuxtLink>
-      <NuxtLink to="#spolecznosc">Społeczność</NuxtLink>
+      <NuxtLink to="/how-it-works">Jak to działa</NuxtLink>
+      <NuxtLink to="/listings">Ogłoszenia</NuxtLink>
       <NuxtLink to="#o-nas">O nas</NuxtLink>
     </nav>
 
@@ -79,10 +79,8 @@
 
   <nav class="bottom-nav" aria-label="Mobilne menu">
     <a
-      href="#jak-to-dziala"
+      href="/how-it-works"
       class="bottom-link"
-      :class="{ 'is-active': activeMobileTab === 'jak-to-dziala' }"
-      @click="setActiveMobileTab('jak-to-dziala')"
     >
       <Icon
         size="24"
@@ -91,19 +89,17 @@
       />
       <span>Jak działa</span>
     </a>
-    <a
-      href="#spolecznosc"
+    <NuxtLink
+      to="/listings"
       class="bottom-link"
-      :class="{ 'is-active': activeMobileTab === 'spolecznosc' }"
-      @click="setActiveMobileTab('spolecznosc')"
     >
       <Icon
         size="24"
-        name="mdi:account-group-outline"
+        name="mdi:flower-outline"
         class="bottom-link-icon"
       />
-      <span>Społecz.</span>
-    </a>
+      <span>Ogłoszenia</span>
+    </NuxtLink>
     <a
       href="#o-nas"
       class="bottom-link"
