@@ -91,6 +91,10 @@ withDefaults(
 }
 
 .hero-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   @media (min-width: 1200px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -102,6 +106,7 @@ withDefaults(
 
 .lottie-box {
   display: block;
+  max-width: 600px;
 }
 
 .hero-box {

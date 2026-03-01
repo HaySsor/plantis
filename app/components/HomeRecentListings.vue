@@ -13,30 +13,16 @@
     </div>
 
     <div v-else-if="listings.length" class="recent-grid">
-      <NuxtLink
+      <ListingCard
         v-for="item in listings"
         :key="item.id"
-        :to="`/listings/${item.id}`"
-        class="listing-card"
-      >
-        <div class="card-image-placeholder">
-          <Icon :name="typeIcon(item.type)" class="type-icon" />
-        </div>
-        <div class="card-body">
-          <span class="card-badge" :class="item.type.toLowerCase()">
-            {{ typeLabel(item.type) }}
-          </span>
-          <p class="card-title">{{ item.title }}</p>
-          <div class="card-meta">
-            <span><Icon name="mdi:map-marker" />{{ item.city }}</span>
-            <span
-              ><Icon :name="deliveryIcon(item.deliveryMode)" />{{
-                deliveryLabel(item.deliveryMode)
-              }}</span
-            >
-          </div>
-        </div>
-      </NuxtLink>
+        :id="item.id"
+        :title="item.title"
+        :type="item.type"
+        :city="item.city"
+        :delivery-mode="item.deliveryMode"
+        :image="item.images?.[0]?.url"
+      />
     </div>
 
     <p v-else class="empty">Brak ogłoszeń. Bądź pierwszy!</p>
@@ -50,43 +36,6 @@ const { data, pending } = await useFetch("/api/listings", {
 
 const listings = computed(() => data.value?.items ?? []);
 
-function typeLabel(type: string) {
-  const map: Record<string, string> = {
-    PLANT: "Roślina",
-    CUTTING: "Sadzonka",
-    LEAF: "Liść",
-    SEEDS: "Nasiona",
-  };
-  return map[type] ?? type;
-}
-
-function typeIcon(type: string) {
-  const map: Record<string, string> = {
-    PLANT: "mdi:flower",
-    CUTTING: "mdi:sprout",
-    LEAF: "mdi:leaf",
-    SEEDS: "mdi:seed",
-  };
-  return map[type] ?? "mdi:flower";
-}
-
-function deliveryLabel(mode: string) {
-  const map: Record<string, string> = {
-    PICKUP: "Odbiór",
-    SHIPPING: "Wysyłka",
-    BOTH: "Odbiór / Wysyłka",
-  };
-  return map[mode] ?? mode;
-}
-
-function deliveryIcon(mode: string) {
-  const map: Record<string, string> = {
-    PICKUP: "mdi:handshake",
-    SHIPPING: "mdi:package-variant",
-    BOTH: "mdi:check-all",
-  };
-  return map[mode] ?? "mdi:truck";
-}
 </script>
 
 <style lang="scss" scoped>
@@ -95,6 +44,7 @@ function deliveryIcon(mode: string) {
   flex-direction: column;
   gap: 2rem;
   padding: 2rem 0;
+  margin-top: 20px;
 }
 
 .recent-header {
@@ -127,8 +77,12 @@ h2 {
 .recent-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
-
+  justify-content: center;
   gap: 1.2rem;
+
+  @media (min-width: 768px) {
+    justify-content: start;
+  }
 }
 
 .listing-card {

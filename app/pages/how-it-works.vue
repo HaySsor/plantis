@@ -28,16 +28,37 @@
         description="Umów dogodny termin odbioru i przekaż roślinę w dobre ręce. Twoja zielona podopieczna zacznie nowy rozdział, a Ty zrobisz miejsce na kolejne roślinne historie."
       />
     </section>
+
     <div class="cta">
-      <VButton :is-button="false" :href="user ? '/listings/add' : '/auth/login'" type="primary">
+      <VButton
+        :is-button="false"
+        :href="user ? '/listings/add' : '/auth/login'"
+        type="primary"
+      >
         Zacznij teraz <Icon name="mdi:arrow-right" />
       </VButton>
+    </div>
+
+    <div class="why-section">
+      <SplitFeature
+        title="Dlaczego warto dołączyć?"
+        :items="whyItems"
+        image="/plants.png"
+        :image-right="false"
+      />
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 const { user } = useAuth();
+
+const whyItems = [
+  "Dajesz roślinom drugie życie zamiast wyrzucać je do kosza.",
+  "Oszczędzasz pieniądze – wszystkie ogłoszenia są całkowicie bezpłatne.",
+  "Wspierasz lokalną, zieloną społeczność i poznajesz osoby z podobną pasją.",
+  "Zmieniasz coś małego w swoim otoczeniu, ale realnie wpływasz na środowisko.",
+];
 </script>
 
 <style lang="scss" scoped>
@@ -50,12 +71,25 @@ const { user } = useAuth();
   grid-template-columns: 1fr;
   gap: 2rem;
   padding: 0 1.6rem 6rem;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
     padding: 0 2.4rem 4rem;
+  }
+  @media (min-width: 1200px) {
+    gap: 4rem;
+  }
+}
+
+.why-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.6rem 4rem;
+
+  @media (min-width: 768px) {
+    padding: 0 2.4rem 6rem;
   }
 }
 

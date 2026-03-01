@@ -54,33 +54,16 @@
 
     <!-- Grid -->
     <div v-else class="listings-grid">
-      <NuxtLink
+      <ListingCard
         v-for="item in listings"
         :key="item.id"
-        :to="`/listings/${item.id}`"
-        class="listing-card"
-      >
-        <div class="card-image-placeholder">
-          <Icon :name="typeIcon(item.type)" class="type-icon" />
-        </div>
-
-        <div class="card-body">
-          <span class="card-type-badge" :class="item.type.toLowerCase()">
-            {{ typeLabel(item.type) }}
-          </span>
-          <p class="card-title">{{ item.title }}</p>
-          <div class="card-meta">
-            <span>
-              <Icon name="mdi:map-marker" />
-              {{ item.city }}
-            </span>
-            <span>
-              <Icon :name="deliveryIcon(item.deliveryMode)" />
-              {{ deliveryLabel(item.deliveryMode) }}
-            </span>
-          </div>
-        </div>
-      </NuxtLink>
+        :id="item.id"
+        :title="item.title"
+        :type="item.type"
+        :city="item.city"
+        :delivery-mode="item.deliveryMode"
+        :image="item.images?.[0]?.url"
+      />
     </div>
   </main>
 </template>
@@ -139,43 +122,6 @@ function pluralizeListings(n: number) {
   return "ogłoszeń";
 }
 
-function typeLabel(type: string) {
-  const map: Record<string, string> = {
-    PLANT: "Roślina",
-    CUTTING: "Sadzonka",
-    LEAF: "Liść",
-    SEEDS: "Nasiona",
-  };
-  return map[type] ?? type;
-}
-
-function typeIcon(type: string) {
-  const map: Record<string, string> = {
-    PLANT: "mdi:flower",
-    CUTTING: "mdi:sprout",
-    LEAF: "mdi:leaf",
-    SEEDS: "mdi:seed",
-  };
-  return map[type] ?? "mdi:flower";
-}
-
-function deliveryLabel(mode: string) {
-  const map: Record<string, string> = {
-    PICKUP: "Odbiór",
-    SHIPPING: "Wysyłka",
-    BOTH: "Odbiór / Wysyłka",
-  };
-  return map[mode] ?? mode;
-}
-
-function deliveryIcon(mode: string) {
-  const map: Record<string, string> = {
-    PICKUP: "mdi:handshake",
-    SHIPPING: "mdi:package-variant",
-    BOTH: "mdi:check-all",
-  };
-  return map[mode] ?? "mdi:truck";
-}
 </script>
 
 <style lang="scss" scoped>
@@ -276,92 +222,4 @@ h1 {
   gap: 1.6rem;
 }
 
-.listing-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 1.6rem;
-  border: 1px solid var(--border-soft);
-  background: var(--surface);
-  overflow: hidden;
-  text-decoration: none;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(123, 191, 138, 0.2);
-  }
-}
-
-.card-image-placeholder {
-  height: 14rem;
-  background: var(--green-soft);
-  display: grid;
-  place-items: center;
-}
-
-.type-icon {
-  font-size: 5.6rem;
-  color: var(--green-dark);
-  opacity: 0.5;
-}
-
-.card-body {
-  padding: 1.4rem 1.6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.card-type-badge {
-  display: inline-block;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.9rem;
-  border-radius: 10rem;
-  width: fit-content;
-  background: var(--green-soft);
-  color: var(--green-dark);
-
-  &.cutting {
-    background: #fef9c3;
-    color: #78610a;
-  }
-  &.leaf {
-    background: #dcfce7;
-    color: #166534;
-  }
-  &.seeds {
-    background: #fce7f3;
-    color: #9d174d;
-  }
-}
-
-.card-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  font-family: var(--font-title);
-  color: var(--text-main);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-meta {
-  display: flex;
-  gap: 1.2rem;
-  flex-wrap: wrap;
-  font-size: 1.3rem;
-  color: var(--text-muted);
-
-  span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-}
 </style>

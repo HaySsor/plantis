@@ -87,6 +87,44 @@
           </div>
         </div>
 
+        <!-- Zdjęcia -->
+        <div class="field-group span-full">
+          <label class="field-label">Zdjęcia (maks. 2)</label>
+          <div
+            class="upload-row"
+            @dragover.prevent="previews.length < 2 && (isDragging = true)"
+            @dragleave.prevent="isDragging = false"
+            @drop.prevent="onDrop"
+          >
+            <div
+              v-if="previews.length < 2"
+              class="upload-zone"
+              :class="{ 'is-dragging': isDragging, 'is-compact': previews.length > 0 }"
+              @click="fileInput?.click()"
+            >
+              <Icon name="mdi:image-plus-outline" class="upload-icon" />
+              <span class="upload-hint">JPG / PNG<br>maks. 10 MB</span>
+            </div>
+            <div v-for="(p, i) in previews" :key="i" class="preview-item">
+              <img :src="p.previewUrl" :alt="`Zdjęcie ${i + 1}`" class="preview-img" />
+              <div v-if="p.uploading" class="preview-overlay">
+                <Icon name="mdi:loading" class="spinner" />
+              </div>
+              <button v-else type="button" class="preview-remove" @click="removeImage(i)">
+                <Icon name="mdi:close" />
+              </button>
+            </div>
+          </div>
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            multiple
+            class="hidden-input"
+            @change="onFileChange"
+          />
+        </div>
+
         <p v-if="serverError" class="server-error span-full">
           {{ serverError }}
         </p>
@@ -134,6 +172,56 @@ const errors = reactive({
 const submitting = ref(false);
 const serverError = ref<string | null>(null);
 
+// --- image upload ---
+const fileInput = ref<HTMLInputElement | null>(null);
+const isDragging = ref(false);
+
+interface Preview {
+  previewUrl: string;
+  uploadedUrl: string | null;
+  uploading: boolean;
+}
+const previews = ref<Preview[]>([]);
+
+async function uploadFile(file: File) {
+  const idx = previews.value.length;
+  previews.value.push({
+    previewUrl: URL.createObjectURL(file),
+    uploadedUrl: null,
+    uploading: true,
+  });
+  try {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await $fetch<{ url: string }>("/api/upload", { method: "POST", body: fd });
+    if (previews.value[idx]) previews.value[idx].uploadedUrl = res.url;
+  } catch {
+    previews.value.splice(idx, 1);
+  } finally {
+    if (previews.value[idx]) previews.value[idx].uploading = false;
+  }
+}
+
+function addFiles(files: FileList | File[]) {
+  const remaining = 2 - previews.value.length;
+  Array.from(files).slice(0, remaining).forEach(uploadFile);
+}
+
+function onFileChange(e: Event) {
+  const files = (e.target as HTMLInputElement).files;
+  if (files) addFiles(files);
+  (e.target as HTMLInputElement).value = "";
+}
+
+function onDrop(e: DragEvent) {
+  isDragging.value = false;
+  if (e.dataTransfer?.files) addFiles(e.dataTransfer.files);
+}
+
+function removeImage(i: number) {
+  previews.value.splice(i, 1);
+}
+
 const typeOptions = [
   { value: "PLANT", label: "Roślina", icon: "mdi:flower" },
   { value: "CUTTING", label: "Sadzonka", icon: "mdi:sprout" },
@@ -180,9 +268,12 @@ async function onSubmit() {
 
   submitting.value = true;
   try {
+    const imageUrls = previews.value
+      .filter((p) => p.uploadedUrl)
+      .map((p) => p.uploadedUrl as string);
     await $fetch("/api/listings", {
       method: "POST",
-      body: { ...form },
+      body: { ...form, imageUrls },
     });
     await navigateTo("/listings");
   } catch (err: any) {
@@ -350,5 +441,124 @@ textarea {
   color: lightcoral;
   text-align: center;
   margin: 0;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border-soft);
+  border-radius: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  text-align: center;
+  color: var(--text-muted);
+  transition: border-color 0.2s, background 0.2s, width 0.2s, height 0.2s, border-radius 0.2s;
+
+  // Domyślnie: full-width
+  width: 100%;
+  padding: 2.4rem;
+
+  // Po dodaniu zdjęcia: kompaktowy kwadrat
+  &.is-compact {
+    width: 90px;
+    height: 120px;
+    padding: 0;
+    border-radius: 1rem;
+    flex-shrink: 0;
+  }
+
+  &:hover,
+  &.is-dragging {
+    border-color: var(--green-main);
+    background: var(--green-soft);
+    color: var(--green-dark);
+  }
+}
+
+.upload-icon {
+  font-size: 2.8rem;
+  color: var(--green-main);
+
+  .is-compact & {
+    font-size: 2rem;
+  }
+}
+
+.upload-hint {
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+
+  .is-compact & {
+    font-size: 1rem;
+  }
+}
+
+.preview-item {
+  position: relative;
+  width: 90px;
+  height: 120px;
+  border-radius: 1rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-items: center;
+}
+
+.spinner {
+  font-size: 2.4rem;
+  color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.preview-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.4rem;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
 }
 </style>

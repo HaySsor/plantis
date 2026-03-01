@@ -32,6 +32,7 @@
         placeholder="Szukaj"
         aria-label="Szukaj"
         @keydown.esc="closeMobileSearch"
+        @keydown.enter="navigateSearch(($event.target as HTMLInputElement).value)"
       />
     </div>
 
@@ -63,6 +64,7 @@
           placeholder="Szukaj"
           aria-label="Szukaj"
           @keydown.esc="closeDesktopSearch"
+          @keydown.enter="navigateSearch(($event.target as HTMLInputElement).value)"
         />
       </div>
       <span class="divider" aria-hidden="true"></span>
@@ -130,6 +132,8 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref } from "vue";
 
+const router = useRouter();
+
 const activeMobileTab = ref("jak-to-dziala");
 const mobileSearchOpen = ref(false);
 const mobileSearchInput = ref<HTMLInputElement | null>(null);
@@ -172,6 +176,14 @@ const toggleDesktopSearch = async () => {
 
 const closeDesktopSearch = () => {
   desktopSearchOpen.value = false;
+};
+
+const navigateSearch = (query: string) => {
+  const q = query.trim();
+  if (!q) return;
+  router.push({ path: "/listings", query: { q } });
+  closeMobileSearch();
+  closeDesktopSearch();
 };
 
 const handleDocumentClick = (event: MouseEvent) => {

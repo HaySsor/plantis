@@ -28,6 +28,10 @@ import AppFooter from "~/components/AppFooter.vue";
   max-width: 1300px;
   margin: 1.6rem auto 0;
   width: 100%;
+
+  @media (min-width: 1001px) {
+    margin-top: 2.4rem;
+  }
 }
 
 .content-wrapper :deep(main) {

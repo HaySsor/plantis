@@ -10,7 +10,7 @@
   --surface: #ffffff;
   --green-soft: #d9f0d7;
   --green-main: #7bbf8a;
-  --green-main-hover: #6bb07a;
+  --green-m-hover: #6bb07a;
   --green-dark: #315f3b;
   --text-main: #23442c;
   --text-muted: #53725b;
@@ -38,7 +38,7 @@ body {
   font-size: 1.6rem;
   background:
     radial-gradient(circle at top right, #eaf8e7 0%, transparent 45%),
-    linear-gradient(180deg, #fafdfa 0%, var(--bg) 100%);
+    linear-gradient(180deg, #eaf8e7 0%, var(--bg) 100%);
   color: var(--text-main);
 }
 

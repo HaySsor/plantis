@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireUser(event);
   const body = await readBody(event);
 
-  const { title, description, city, type, deliveryMode } = body ?? {};
+  const { title, description, city, type, deliveryMode, imageUrls } = body ?? {};
 
   if (!title || typeof title !== "string" || title.trim().length < 3) {
     throw createError({ statusCode: 400, statusMessage: "Tytuł musi mieć co najmniej 3 znaki" });
@@ -27,6 +27,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy sposób przekazania" });
   }
 
+  const urls: string[] = Array.isArray(imageUrls)
+    ? imageUrls.filter((u: unknown) => typeof u === "string").slice(0, 2)
+    : [];
+
   const listing = await prisma.listing.create({
     data: {
       userId: user.id,
@@ -36,6 +40,9 @@ export default defineEventHandler(async (event) => {
       type,
       deliveryMode,
       status: "ACTIVE",
+      images: urls.length
+        ? { create: urls.map((url, order) => ({ url, order })) }
+        : undefined,
     },
   });
 
