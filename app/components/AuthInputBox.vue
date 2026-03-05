@@ -70,7 +70,7 @@ input {
   border-radius: 12px;
   border: none;
   font-size: 14px;
-  background-color: #eff3f1;
+  background-color: #fff;
   width: 100%;
   padding-left: 40px;
 }

@@ -6,6 +6,10 @@
         <Icon :name="typeIcon" class="placeholder-icon" />
       </div>
 
+      <button class="card-fav" type="button" :class="{ 'is-active': isFavorite(id) }" @click.stop.prevent="toggle(id)">
+        <Icon :name="isFavorite(id) ? 'mdi:heart' : 'mdi:heart-outline'" />
+      </button>
+
       <span class="card-title-badge">{{ title }}</span>
 
       <span class="card-meta-badge">
@@ -20,6 +24,9 @@
 </template>
 
 <script setup lang="ts">
+const { isFavorite, toggle, fetchFavorites } = useFavorites();
+onMounted(fetchFavorites);
+
 const props = defineProps<{
   id: string;
   title: string;
@@ -101,6 +108,32 @@ const deliveryLabel = computed(() => {
   font-size: 6.4rem;
   color: #4a7c59;
   opacity: 0.45;
+}
+
+.card-fav {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 1.9rem;
+  color: var(--text-muted);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: color 0.15s, background 0.15s;
+  z-index: 1;
+
+  &:hover,
+  &.is-active {
+    color: #e05a7a;
+    background: rgba(255, 255, 255, 1);
+  }
 }
 
 .card-title-badge {

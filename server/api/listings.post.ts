@@ -5,7 +5,8 @@ export default defineEventHandler(async (event) => {
   const user = await requireUser(event);
   const body = await readBody(event);
 
-  const { title, description, city, type, deliveryMode, imageUrls } = body ?? {};
+  const { title, description, city, type, deliveryMode, imageUrls,
+          watering, light, position, height, difficulty, petFriendly } = body ?? {};
 
   if (!title || typeof title !== "string" || title.trim().length < 3) {
     throw createError({ statusCode: 400, statusMessage: "Tytuł musi mieć co najmniej 3 znaki" });
@@ -27,6 +28,16 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy sposób przekazania" });
   }
 
+  if (!watering || !["LOW", "MEDIUM", "HIGH"].includes(watering)) {
+    throw createError({ statusCode: 400, statusMessage: "Podaj częstotliwość podlewania" });
+  }
+  if (!light || !["LOW", "MEDIUM", "HIGH", "FULL_SUN"].includes(light)) {
+    throw createError({ statusCode: 400, statusMessage: "Podaj wymagania świetlne" });
+  }
+  if (!position || !["INDOOR", "OUTDOOR", "BOTH"].includes(position)) {
+    throw createError({ statusCode: 400, statusMessage: "Podaj stanowisko rośliny" });
+  }
+
   const urls: string[] = Array.isArray(imageUrls)
     ? imageUrls.filter((u: unknown) => typeof u === "string").slice(0, 2)
     : [];
@@ -40,6 +51,12 @@ export default defineEventHandler(async (event) => {
       type,
       deliveryMode,
       status: "ACTIVE",
+      watering,
+      light,
+      position,
+      height: ["SMALL", "MEDIUM", "LARGE"].includes(height) ? height : null,
+      difficulty: ["EASY", "MEDIUM", "HARD"].includes(difficulty) ? difficulty : null,
+      petFriendly: typeof petFriendly === "boolean" ? petFriendly : null,
       images: urls.length
         ? { create: urls.map((url, order) => ({ url, order })) }
         : undefined,
