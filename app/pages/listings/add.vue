@@ -66,23 +66,14 @@
           required
         />
 
+
         <!-- Sposób przekazania -->
         <div class="field-group">
           <label class="field-label">Sposób przekazania</label>
-          <p v-if="errors.deliveryMode" class="field-error">
-            {{ errors.deliveryMode }}
-          </p>
           <div class="chip-group">
-            <button
-              v-for="opt in deliveryOptions"
-              :key="opt.value"
-              type="button"
-              class="chip"
-              :class="{ active: form.deliveryMode === opt.value }"
-              @click="form.deliveryMode = opt.value"
-            >
-              <Icon :name="opt.icon" />
-              {{ opt.label }}
+            <button type="button" class="chip active" disabled>
+              <Icon name="mdi:handshake" />
+              Odbiór osobisty
             </button>
           </div>
         </div>
@@ -309,7 +300,7 @@ const form = reactive({
   description: "",
   city: "",
   type: "",
-  deliveryMode: "",
+  deliveryMode: "PICKUP",
   watering: "",
   light: "",
   position: "",
@@ -323,7 +314,6 @@ const errors = reactive({
   description: null as string | null,
   city: null as string | null,
   type: null as string | null,
-  deliveryMode: null as string | null,
   watering: null as string | null,
   light: null as string | null,
   position: null as string | null,
@@ -392,12 +382,6 @@ const typeOptions = [
   { value: "SEEDS", label: "Nasiona", icon: "mdi:seed" },
 ];
 
-const deliveryOptions = [
-  { value: "PICKUP", label: "Odbiór osobisty", icon: "mdi:handshake" },
-  { value: "SHIPPING", label: "Wysyłka", icon: "mdi:package-variant" },
-  { value: "BOTH", label: "Oba", icon: "mdi:check-all" },
-];
-
 const wateringOptions = [
   { value: "LOW", label: "Sucholubne", icon: "mdi:water-off" },
   { value: "MEDIUM", label: "Umiarkowane", icon: "mdi:water" },
@@ -447,11 +431,6 @@ function validate() {
 
   errors.type = !form.type ? "Wybierz typ ogłoszenia" : null;
   if (errors.type) ok = false;
-
-  errors.deliveryMode = !form.deliveryMode
-    ? "Wybierz sposób przekazania"
-    : null;
-  if (errors.deliveryMode) ok = false;
 
   errors.watering = !form.watering ? "Wybierz częstotliwość podlewania" : null;
   if (errors.watering) ok = false;

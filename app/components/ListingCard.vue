@@ -1,24 +1,54 @@
 <template>
   <NuxtLink :to="`/listings/${id}`" class="listing-card">
-    <div class="card-image">
+    <!-- Top: location + heart -->
+    <div class="card-top">
+      <span class="card-location">
+        <Icon name="mdi:map-marker-outline" class="loc-icon" />
+        <strong>{{ city }}</strong>
+        <span class="loc-dot">·</span>
+        {{ deliveryLabel }}
+      </span>
+      <button
+        class="card-fav"
+        type="button"
+        :class="{ 'is-active': isFavorite(id) }"
+        @click.stop.prevent="toggle(id)"
+      >
+        <Icon :name="isFavorite(id) ? 'mdi:heart' : 'mdi:heart-outline'" />
+      </button>
+    </div>
+
+    <!-- Image with rounded corners -->
+    <div class="card-image-wrap">
       <img v-if="image" :src="image" :alt="title" class="card-img" />
       <div v-else class="card-img-placeholder">
         <Icon :name="typeIcon" class="placeholder-icon" />
       </div>
 
-      <button class="card-fav" type="button" :class="{ 'is-active': isFavorite(id) }" @click.stop.prevent="toggle(id)">
-        <Icon :name="isFavorite(id) ? 'mdi:heart' : 'mdi:heart-outline'" />
-      </button>
+      <!-- Attribute chips overlay -->
+      <div v-if="attrChips.length" class="card-attrs">
+        <span
+          v-for="chip in attrChips"
+          :key="chip.label"
+          class="card-attr-chip"
+        >
+          <Icon :name="chip.icon" class="attr-chip-icon" />
+          {{ chip.label }}
+        </span>
+      </div>
+    </div>
 
-      <span class="card-title-badge">{{ title }}</span>
-
-      <span class="card-meta-badge">
-        <Icon name="mdi:map-marker-outline" class="meta-icon" />
-        {{ city }}
-        <span class="meta-dot" aria-hidden="true">·</span>
-        <Icon :name="deliveryIcon" class="meta-icon" />
-        {{ deliveryLabel }}
-      </span>
+    <!-- Content -->
+    <div class="card-content">
+      <h3 class="card-title">{{ title }}</h3>
+      <p v-if="description" class="card-desc">{{ description }}</p>
+      <div v-if="ownerName" class="card-owner">
+        <div class="owner-avatar">{{ ownerInitial }}</div>
+        <div class="owner-meta">
+          <span class="owner-name">{{ ownerName }}</span>
+          <span class="owner-subtitle">Opiekun rośliny</span>
+        </div>
+      </div>
     </div>
   </NuxtLink>
 </template>
@@ -34,7 +64,16 @@ const props = defineProps<{
   city: string;
   deliveryMode: string;
   image?: string;
+  description?: string;
+  watering?: string | null;
+  light?: string | null;
+  difficulty?: string | null;
+  ownerName?: string | null;
 }>();
+
+const ownerInitial = computed(
+  () => props.ownerName?.charAt(0).toUpperCase() ?? "U",
+);
 
 const typeIcon = computed(() => {
   const map: Record<string, string> = {
@@ -46,15 +85,6 @@ const typeIcon = computed(() => {
   return map[props.type] ?? "mdi:flower";
 });
 
-const deliveryIcon = computed(() => {
-  const map: Record<string, string> = {
-    PICKUP: "mdi:handshake-outline",
-    SHIPPING: "mdi:package-variant-closed",
-    BOTH: "mdi:check-all",
-  };
-  return map[props.deliveryMode] ?? "mdi:truck-outline";
-});
-
 const deliveryLabel = computed(() => {
   const map: Record<string, string> = {
     PICKUP: "Odbiór",
@@ -63,29 +93,145 @@ const deliveryLabel = computed(() => {
   };
   return map[props.deliveryMode] ?? props.deliveryMode;
 });
+
+const attrChips = computed(() => {
+  const chips: { icon: string; label: string }[] = [];
+
+  if (props.watering) {
+    const map: Record<string, { icon: string; label: string }> = {
+      LOW: { icon: "mdi:water-off", label: "Sucholubne" },
+      MEDIUM: { icon: "mdi:water", label: "Umiarkowane" },
+      HIGH: { icon: "mdi:water-plus", label: "Wilgociolubne" },
+    };
+    if (map[props.watering]) chips.push(map[props.watering]);
+  }
+
+  if (props.light) {
+    const map: Record<string, { icon: string; label: string }> = {
+      LOW: { icon: "mdi:weather-night", label: "Cień" },
+      MEDIUM: { icon: "mdi:weather-partly-cloudy", label: "Półcień" },
+      HIGH: { icon: "mdi:weather-sunny", label: "Jasne" },
+      FULL_SUN: { icon: "mdi:white-balance-sunny", label: "Pełne słońce" },
+    };
+    if (map[props.light]) chips.push(map[props.light]);
+  }
+
+  if (props.difficulty) {
+    const map: Record<string, { icon: string; label: string }> = {
+      EASY: { icon: "mdi:emoticon-happy-outline", label: "Łatwa" },
+      MEDIUM: { icon: "mdi:emoticon-neutral-outline", label: "Średnia" },
+      HARD: { icon: "mdi:emoticon-sad-outline", label: "Trudna" },
+    };
+    const chip = map[props.difficulty];
+    if (chip) chips.push(chip);
+  }
+
+  return chips.slice(0, 3);
+});
 </script>
 
 <style lang="scss" scoped>
 .listing-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   text-decoration: none;
-  border-radius: 22px;
+  background: #fff;
+  border-radius: 2.4rem;
   overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+  padding: 1.2rem 1.2rem 1.6rem;
+  gap: 0;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(60, 100, 70, 0.16);
+    box-shadow: 0 12px 32px rgba(60, 100, 70, 0.14);
   }
 }
 
-.card-image {
+/* ── Top bar ── */
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0 0.2rem 1rem;
+}
+
+.card-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f0f0ee;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.8rem;
+  font-size: 1.3rem;
+  color: var(--green-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 4.8rem);
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.loc-icon {
+  font-size: 1.4rem;
+  color: var(--green-main);
+  flex-shrink: 0;
+}
+
+.loc-dot {
+  opacity: 0.4;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.card-fav {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  border: 1.5px solid #e8e8e4;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 1.9rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition:
+    color 0.15s,
+    background 0.15s,
+    border-color 0.15s;
+
+  &:hover {
+    color: #e05a7a;
+    border-color: #fca5a5;
+  }
+
+  &.is-active {
+    color: #e05a7a;
+    border-color: #fca5a5;
+    background: #fef2f2;
+
+    :deep(svg) {
+      fill: currentColor;
+    }
+  }
+}
+
+/* ── Image ── */
+.card-image-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 2 / 2;
+  border-radius: 1.6rem;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .card-img {
@@ -110,75 +256,106 @@ const deliveryLabel = computed(() => {
   opacity: 0.45;
 }
 
-.card-fav {
+/* ── Attribute chips on image ── */
+.card-attrs {
   position: absolute;
-  top: 1.2rem;
-  right: 1.2rem;
-  width: 3.6rem;
-  height: 3.6rem;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  font-size: 1.9rem;
-  color: var(--text-muted);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: color 0.15s, background 0.15s;
-  z-index: 1;
-
-  &:hover,
-  &.is-active {
-    color: #e05a7a;
-    background: rgba(255, 255, 255, 1);
-  }
+  bottom: 1.2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  justify-content: center;
 }
 
-.card-title-badge {
-  position: absolute;
-  top: 1.4rem;
-  left: 1.4rem;
+.card-attr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   border-radius: 999px;
-  padding: 0.55rem 1.2rem;
-  font-size: 1.4rem;
+  padding: 0.45rem 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #1d2f20;
-  font-family: var(--font-title);
-  max-width: calc(100% - 2.8rem);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #2d4a35;
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.card-meta-badge {
-  position: absolute;
-  bottom: 1.4rem;
-  right: 1.4rem;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(6px);
-  border-radius: 999px;
-  padding: 0.55rem 1.2rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #3a4e3f;
-  display: inline-flex;
-  align-items: center;
+.attr-chip-icon {
+  font-size: 1.4rem;
+  color: var(--green-main);
+}
+
+/* ── Content ── */
+.card-content {
+  padding: 1.2rem 0.4rem 0;
+  display: flex;
+  flex-direction: column;
   gap: 0.4rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  flex: 1;
 }
 
-.meta-icon {
+.card-title {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-desc {
+  font-size: 1.35rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Owner ── */
+.card-owner {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.owner-avatar {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green-dark);
   font-size: 1.5rem;
-  color: #4a7c59;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.meta-dot {
-  opacity: 0.4;
-  font-size: 1.1rem;
+.owner-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.owner-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
 }
 </style>

@@ -23,8 +23,8 @@ export default defineEventHandler(async (event) => {
       difficulty: true,
       petFriendly: true,
       createdAt: true,
-      userId: true,
       images: { select: { url: true, order: true }, orderBy: { order: "asc" } },
+      user: { select: { name: true } },
     },
   });
 

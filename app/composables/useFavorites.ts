@@ -14,6 +14,15 @@ export function useFavorites() {
     } catch {}
   }
 
+  // Auto-fetch when user becomes available (fixes timing issue on page refresh)
+  // Also clears favorites on logout
+  if (import.meta.client) {
+    watch(user, (u) => {
+      if (u && !loaded.value) fetchFavorites();
+      else if (!u) { ids.value = []; loaded.value = false; }
+    }, { immediate: true });
+  }
+
   function isFavorite(id: string) {
     return ids.value.includes(id);
   }

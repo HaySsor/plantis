@@ -170,6 +170,11 @@
         :city="item.city"
         :delivery-mode="item.deliveryMode"
         :image="item.images?.[0]?.url"
+        :description="item.description"
+        :watering="item.watering"
+        :light="item.light"
+        :difficulty="item.difficulty"
+        :owner-name="item.user?.name"
       />
     </div>
   </main>
@@ -232,7 +237,22 @@ const difficultyOptions = [
   { value: "HARD",   label: "Trudna",  icon: "mdi:emoticon-sad-outline"     },
 ];
 
-const { data, pending, error } = await useFetch("/api/listings", {
+type ListingItem = {
+  id: string;
+  title: string;
+  description: string;
+  city: string;
+  type: string;
+  deliveryMode: string;
+  watering: string | null;
+  light: string | null;
+  difficulty: string | null;
+  createdAt: string;
+  images: { url: string; order: number }[];
+  user: { name: string } | null;
+};
+
+const { data, pending, error } = await useFetch<{ page: number; pageSize: number; total: number; items: ListingItem[] }>("/api/listings", {
   query: computed(() => ({
     q:           q.value             || undefined,
     city:        city.value          || undefined,
@@ -461,12 +481,7 @@ h1 {
 /* ── Grid ── */
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
-  justify-content: center;
-  gap: 1.2rem;
-
-  @media (min-width: 768px) {
-    justify-content: start;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.6rem;
 }
 </style>

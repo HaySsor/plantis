@@ -9,7 +9,7 @@
     </div>
 
     <div v-if="pending" class="recent-grid">
-      <div v-for="n in 4" :key="n" class="listing-card skeleton" />
+      <div v-for="n in 4" :key="n" class="skeleton-card" />
     </div>
 
     <div v-else-if="listings.length" class="recent-grid">
@@ -22,6 +22,11 @@
         :city="item.city"
         :delivery-mode="item.deliveryMode"
         :image="item.images?.[0]?.url"
+        :description="item.description"
+        :watering="item.watering"
+        :light="item.light"
+        :difficulty="item.difficulty"
+        :owner-name="item.user?.name"
       />
     </div>
 
@@ -30,12 +35,26 @@
 </template>
 
 <script setup lang="ts">
-const { data, pending } = await useFetch("/api/listings", {
+type ListingItem = {
+  id: string;
+  title: string;
+  description: string;
+  city: string;
+  type: string;
+  deliveryMode: string;
+  watering: string | null;
+  light: string | null;
+  difficulty: string | null;
+  createdAt: string;
+  images: { url: string; order: number }[];
+  user: { name: string } | null;
+};
+
+const { data, pending } = await useFetch<{ items: ListingItem[] }>("/api/listings", {
   query: { pageSize: 4 },
 });
 
 const listings = computed(() => data.value?.items ?? []);
-
 </script>
 
 <style lang="scss" scoped>
@@ -67,6 +86,7 @@ h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--green-dark);
+  text-decoration: none;
   transition: gap 0.15s;
 
   &:hover {
@@ -76,119 +96,21 @@ h2 {
 
 .recent-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
-  justify-content: center;
-  gap: 1.2rem;
-
-  @media (min-width: 768px) {
-    justify-content: start;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.6rem;
 }
 
-.listing-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 1.6rem;
-  border: 1px solid var(--border-soft);
-  background: var(--surface);
-  overflow: hidden;
-  text-decoration: none;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(123, 191, 138, 0.2);
-  }
-
-  &.skeleton {
-    height: 20rem;
-    background: linear-gradient(90deg, #e8f4ea 25%, #f0f8f1 50%, #e8f4ea 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-    pointer-events: none;
-  }
+.skeleton-card {
+  height: 36rem;
+  border-radius: 2.4rem;
+  background: linear-gradient(90deg, #e8f4ea 25%, #f0f8f1 50%, #e8f4ea 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.card-image-placeholder {
-  height: 12rem;
-  background: var(--green-soft);
-  display: grid;
-  place-items: center;
-}
-
-.type-icon {
-  font-size: 4.8rem;
-  color: var(--green-dark);
-  opacity: 0.4;
-}
-
-.card-body {
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.card-badge {
-  display: inline-block;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.9rem;
-  border-radius: 10rem;
-  width: fit-content;
-  background: var(--green-soft);
-  color: var(--green-dark);
-
-  &.cutting {
-    background: #fef9c3;
-    color: #78610a;
-  }
-  &.leaf {
-    background: #dcfce7;
-    color: #166534;
-  }
-  &.seeds {
-    background: #fce7f3;
-    color: #9d174d;
-  }
-}
-
-.card-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  font-family: var(--font-title);
-  color: var(--text-main);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 1.2rem;
-  color: var(--text-muted);
-
-  span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .empty {
