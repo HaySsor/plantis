@@ -83,35 +83,35 @@ function handleLinkClick(event: MouseEvent) {
   }
 
   &.primary {
-    background-color: var(--green-soft);
-    color: #187536;
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(123, 191, 138, 0.34);
-      filter: brightness(1.03);
-    }
-  }
-
-  &.secondary {
     background-color: var(--green-main);
     color: #ffffff;
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(103, 181, 121, 0.34);
-      filter: brightness(1.03);
+      box-shadow: 0 10px 24px rgba(120, 168, 126, 0.45);
+      filter: brightness(1.06);
     }
   }
 
-  &.dark {
-    background-color: #333;
+  &.secondary {
+    background-color: var(--green-dark);
     color: #ffffff;
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(49, 95, 59, 0.38);
-      filter: brightness(1.03);
+      box-shadow: 0 10px 24px rgba(46, 82, 53, 0.42);
+      filter: brightness(1.1);
+    }
+  }
+
+  &.dark {
+    background-color: #1a2e20;
+    color: #ffffff;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(26, 46, 32, 0.4);
+      filter: brightness(1.12);
     }
   }
 
@@ -122,19 +122,19 @@ function handleLinkClick(event: MouseEvent) {
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(140, 170, 147, 0.3);
-      filter: brightness(1.03);
+      box-shadow: 0 10px 24px rgba(120, 168, 126, 0.22);
+      filter: brightness(1.02);
     }
   }
 
   &.yellow {
-    background-color: #f2cf5b;
-    color: #5a4a12;
+    background-color: var(--yellow-main);
+    color: var(--yellow-dark);
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(242, 207, 91, 0.38);
-      filter: brightness(1.03);
+      box-shadow: 0 10px 24px rgba(210, 170, 50, 0.38);
+      filter: brightness(1.05);
     }
   }
 }

@@ -2,21 +2,25 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <AppToast />
 </template>
 
 <style lang="scss">
 :root {
-  --bg: #f7fbf6;
+  --bg: #f4f6f2;
   --surface: #ffffff;
-  --green-soft: #d9f0d7;
-  --green-main: #7bbf8a;
-  --green-m-hover: #6bb07a;
-  --green-dark: #315f3b;
-  --text-main: #23442c;
-  --text-muted: #53725b;
-  --border-soft: #d7e8d9;
-  --dark-text: #1b2f1e;
-  --gray-text: #828181;
+  --green-soft: #e5ebe0;
+  --green-main: #78a87e;
+  --green-m-hover: #68987e;
+  --green-dark: #2e5235;
+  --text-main: #283530;
+  --text-muted: #607868;
+  --border-soft: #d5e2d8;
+  --dark-text: #1a2e20;
+  --gray-text: #8a9490;
+  --yellow-soft: #fef5d4;
+  --yellow-main: #d4aa3a;
+  --yellow-dark: #7a5c0a;
   --font-ui: "Roboto", "Segoe UI", sans-serif;
   --font-title: "Outfit", "Segoe UI", sans-serif;
   --font-quote: "Cormorant Garamond", Georgia, serif;
@@ -36,9 +40,7 @@ body {
   margin: 0;
   font-family: var(--font-ui);
   font-size: 1.6rem;
-  background:
-    radial-gradient(circle at top right, #eaf8e7 0%, transparent 45%),
-    linear-gradient(180deg, #eaf8e7 0%, var(--bg) 100%);
+  background: #f4f6f2;
   color: var(--text-main);
 }
 

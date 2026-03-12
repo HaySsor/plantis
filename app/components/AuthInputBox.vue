@@ -73,6 +73,7 @@ input {
   background-color: #fff;
   width: 100%;
   padding-left: 40px;
+  border: 1px solid var(--gray-text);
 }
 
 input:focus {

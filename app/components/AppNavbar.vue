@@ -250,7 +250,7 @@ onUnmounted(() => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #d7f4dd;
+  background: var(--green-soft);
 }
 
 .logo-mark-icon {
@@ -276,7 +276,7 @@ onUnmounted(() => {
 }
 
 .logo-text span {
-  color: #2fd063;
+  color: var(--green-main);
 }
 
 .nav-desktop {

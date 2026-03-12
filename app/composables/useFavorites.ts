@@ -1,6 +1,6 @@
 export function useFavorites() {
   const { user } = useAuth();
-  const router = useRouter();
+  const { warning } = useToast();
 
   const ids = useState<string[]>("favorites", () => []);
   const loaded = useState<boolean>("favorites-loaded", () => false);
@@ -29,7 +29,7 @@ export function useFavorites() {
 
   async function toggle(id: string) {
     if (!user.value) {
-      router.push("/auth/login");
+      warning("Musisz być zalogowany, aby dodać do ulubionych.");
       return;
     }
 

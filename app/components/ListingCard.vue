@@ -166,7 +166,7 @@ const attrChips = computed(() => {
   gap: 0.35rem;
   background: #f0f0ee;
   border-radius: 999px;
-  padding: 0.5rem 1.1rem 0.5rem 0.8rem;
+  padding: 0.8rem 1.1rem 0.8rem 0.8rem;
   font-size: 1.3rem;
   color: var(--green-dark);
   white-space: nowrap;
@@ -319,6 +319,7 @@ const attrChips = computed(() => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  padding-bottom: 0.5rem;
 }
 
 /* ── Owner ── */
@@ -326,7 +327,8 @@ const attrChips = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border-soft);
 }
 
 .owner-avatar {

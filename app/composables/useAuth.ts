@@ -32,6 +32,7 @@ export function useAuth() {
     try {
       await $fetch("/api/auth/logout", { method: "POST" });
       user.value = null;
+      await navigateTo("/");
     } finally {
       loading.value = false;
     }

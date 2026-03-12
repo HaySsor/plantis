@@ -555,7 +555,7 @@ async function onLogout() {
   padding: 1rem 1.2rem;
   border-radius: 1.2rem;
   border: 1px solid var(--border-soft);
-  background: var(--bg);
+  box-shadow: 0 0 10px var(--bg);
 }
 
 .listing-thumb {
@@ -628,7 +628,6 @@ async function onLogout() {
   gap: 1.2rem;
   padding: 1.6rem 2rem;
   border-top: 1px solid var(--border-soft);
-  background: var(--bg);
 
   @media (min-width: 640px) {
     flex-direction: row;

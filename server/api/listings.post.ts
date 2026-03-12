@@ -23,8 +23,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy typ ogłoszenia" });
   }
 
-  const validDeliveryModes = ["PICKUP", "SHIPPING", "BOTH"];
-  if (!deliveryMode || !validDeliveryModes.includes(deliveryMode)) {
+  if (deliveryMode !== "PICKUP") {
     throw createError({ statusCode: 400, statusMessage: "Nieprawidłowy sposób przekazania" });
   }
 

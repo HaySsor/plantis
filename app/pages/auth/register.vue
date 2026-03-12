@@ -198,7 +198,7 @@ async function onSubmit() {
   gap: 24px;
   border-radius: 24px;
   padding: 20px;
-  background-color: #eff5f1;
+  background-color: white;
   border: 1px solid #e1ebe3;
   height: max-content;
 
