@@ -4,6 +4,7 @@ import { hashToken } from "./auth";
 export type AuthUser = {
   id: string;
   email: string;
+  role: "USER" | "ADMIN" | "EDITOR";
 };
 
 export async function requireUser(event: any): Promise<AuthUser> {
@@ -24,5 +25,5 @@ export async function requireUser(event: any): Promise<AuthUser> {
     throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
   }
 
-  return { id: session.user.id, email: session.user.email };
+  return { id: session.user.id, email: session.user.email, role: session.user.role };
 }

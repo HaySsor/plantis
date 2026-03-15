@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
       city: city.trim(),
       type,
       deliveryMode,
-      status: "ACTIVE",
+      status: "PENDING",
       watering,
       light,
       position,

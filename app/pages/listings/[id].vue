@@ -84,48 +84,17 @@
         <p class="detail-description">{{ listing.description }}</p>
 
         <!-- Plant attrs -->
-        <div v-if="hasAttributes" class="plant-attrs">
-          <div v-if="listing.watering" class="attr-chip">
-            <Icon :name="wateringIcon" class="attr-icon" />
-            <span class="attr-value">{{ wateringLabel }}</span>
-          </div>
-
-          <div v-if="listing.light" class="attr-chip">
-            <Icon :name="lightIcon" class="attr-icon" />
-            <span class="attr-value">{{ lightLabel }}</span>
-          </div>
-
-          <div v-if="listing.position" class="attr-chip">
-            <Icon :name="positionIcon" class="attr-icon" />
-            <span class="attr-value">{{ positionLabel }}</span>
-          </div>
-
-          <div v-if="listing.height" class="attr-chip">
-            <Icon name="mdi:arrow-expand-vertical" class="attr-icon" />
-            <span class="attr-value">{{ heightLabel }}</span>
-          </div>
-
-          <div v-if="listing.difficulty" class="attr-chip">
-            <Icon :name="difficultyIcon" class="attr-icon" />
-            <span class="attr-value">{{ difficultyLabel }}</span>
-          </div>
-
-          <div
-            v-if="
-              listing.petFriendly !== null && listing.petFriendly !== undefined
-            "
-            class="attr-chip"
-            :class="listing.petFriendly ? 'attr-pet-yes' : 'attr-pet-no'"
-          >
-            <Icon
-              :name="listing.petFriendly ? 'mdi:paw' : 'mdi:paw-off'"
-              class="attr-icon"
-            />
-            <span class="attr-value">{{
-              listing.petFriendly ? "Przyjazne" : "Nieprzyjazne"
-            }}</span>
-          </div>
-        </div>
+        <ListingAttrChips
+          v-if="hasAttributes"
+          :watering="listing.watering"
+          :light="listing.light"
+          :position="listing.position"
+          :height="listing.height"
+          :difficulty="listing.difficulty"
+          :pet-friendly="listing.petFriendly"
+          variant="full"
+          class="plant-attrs"
+        />
 
         <!-- Owner -->
         <div class="owner-card">
@@ -215,101 +184,6 @@ const hasAttributes = computed(
     listing.value?.petFriendly !== null,
 );
 
-const wateringLabel = computed(
-  () =>
-    (
-      ({
-        LOW: "Sucholubne",
-        MEDIUM: "Umiarkowane",
-        HIGH: "Wilgociolubne",
-      }) as Record<string, string>
-    )[listing.value?.watering ?? ""] ?? "",
-);
-const wateringIcon = computed(
-  () =>
-    (
-      ({
-        LOW: "mdi:water-off",
-        MEDIUM: "mdi:water",
-        HIGH: "mdi:water-plus",
-      }) as Record<string, string>
-    )[listing.value?.watering ?? ""] ?? "mdi:water",
-);
-
-const lightLabel = computed(
-  () =>
-    (
-      ({
-        LOW: "Cieniolubne",
-        MEDIUM: "Półcień",
-        HIGH: "Jasne stanowisko",
-        FULL_SUN: "Pełne słońce",
-      }) as Record<string, string>
-    )[listing.value?.light ?? ""] ?? "",
-);
-const lightIcon = computed(
-  () =>
-    (
-      ({
-        LOW: "mdi:weather-night",
-        MEDIUM: "mdi:weather-partly-cloudy",
-        HIGH: "mdi:weather-sunny",
-        FULL_SUN: "mdi:white-balance-sunny",
-      }) as Record<string, string>
-    )[listing.value?.light ?? ""] ?? "mdi:weather-sunny",
-);
-
-const positionLabel = computed(
-  () =>
-    (
-      ({
-        INDOOR: "Domowe",
-        OUTDOOR: "Zewnętrzne",
-        BOTH: "Domowe / Zewnętrzne",
-      }) as Record<string, string>
-    )[listing.value?.position ?? ""] ?? "",
-);
-const positionIcon = computed(
-  () =>
-    (
-      ({
-        INDOOR: "mdi:home-outline",
-        OUTDOOR: "mdi:tree-outline",
-        BOTH: "mdi:home-variant-outline",
-      }) as Record<string, string>
-    )[listing.value?.position ?? ""] ?? "mdi:home-outline",
-);
-
-const heightLabel = computed(
-  () =>
-    (
-      ({
-        SMALL: "do 30 cm",
-        MEDIUM: "30–80 cm",
-        LARGE: "powyżej 80 cm",
-      }) as Record<string, string>
-    )[listing.value?.height ?? ""] ?? "",
-);
-
-const difficultyLabel = computed(
-  () =>
-    (
-      ({ EASY: "Łatwa", MEDIUM: "Średnia", HARD: "Trudna" }) as Record<
-        string,
-        string
-      >
-    )[listing.value?.difficulty ?? ""] ?? "",
-);
-const difficultyIcon = computed(
-  () =>
-    (
-      ({
-        EASY: "mdi:emoticon-happy-outline",
-        MEDIUM: "mdi:emoticon-neutral-outline",
-        HARD: "mdi:emoticon-sad-outline",
-      }) as Record<string, string>
-    )[listing.value?.difficulty ?? ""] ?? "mdi:emoticon-neutral-outline",
-);
 </script>
 
 <style lang="scss" scoped>
@@ -421,7 +295,7 @@ const difficultyIcon = computed(
 .main-img {
   width: 100%;
   object-fit: cover;
-  max-height: 500px;
+  height: 500px;
   display: block;
 }
 

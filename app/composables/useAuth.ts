@@ -1,4 +1,4 @@
-type AuthUser = { id: string; email: string; name: string | null } | null;
+type AuthUser = { id: string; email: string; name: string | null; role: "USER" | "ADMIN" | "EDITOR" } | null;
 
 export function useAuth() {
   const user = useState<AuthUser>("auth:user", () => null);
@@ -7,7 +7,8 @@ export function useAuth() {
   async function fetchMe() {
     loading.value = true;
     try {
-      const res = await $fetch<{ user: AuthUser }>("/api/auth/me");
+      const fetchWithHeaders = useRequestFetch();
+      const res = await fetchWithHeaders<{ user: AuthUser }>("/api/auth/me");
       user.value = res.user;
     } finally {
       loading.value = false;

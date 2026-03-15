@@ -37,6 +37,12 @@ enum Difficulty {
   HARD
 }
 
+enum UserRole {
+  USER
+  ADMIN
+  EDITOR
+}
+
 enum ListingType {
   PLANT
   CUTTING
@@ -51,9 +57,11 @@ enum DeliveryMode {
 }
 
 enum ListingStatus {
+  PENDING
   ACTIVE
   HIDDEN
   DELETED
+  REJECTED
 }
 
 model User {
@@ -63,6 +71,7 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   name         String?
+  role         UserRole  @default(USER)
 
   listings     Listing[]
   sessions     Session[]
@@ -77,7 +86,7 @@ model Listing {
   city         String
   type         ListingType
   deliveryMode DeliveryMode
-  status       ListingStatus @default(ACTIVE)
+  status       ListingStatus @default(PENDING)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 

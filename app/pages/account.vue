@@ -74,17 +74,39 @@
                       />
                     </div>
                     <div class="listing-info">
-                      <span class="listing-name">{{ item.title }}</span>
+                      <div class="listing-name-row">
+                        <span class="listing-name">{{ item.title }}</span>
+                        <span class="listing-status" :class="`status--${item.status.toLowerCase()}`">
+                          {{ statusLabel(item.status) }}
+                        </span>
+                      </div>
                       <span class="listing-date"
                         >Dodana: {{ formatDate(item.createdAt) }}</span
                       >
                     </div>
-                    <NuxtLink
-                      :to="`/listings/${item.id}`"
-                      class="listing-action"
-                    >
-                      Podgląd
-                    </NuxtLink>
+                    <DropdownMenu>
+                      <NuxtLink
+                        :to="`/listings/${item.id}`"
+                        class="dropdown-item"
+                      >
+                        <Icon name="mdi:eye-outline" />
+                        Podgląd
+                      </NuxtLink>
+                      <NuxtLink
+                        :to="`/listings/edit/${item.id}`"
+                        class="dropdown-item"
+                      >
+                        <Icon name="mdi:pencil-outline" />
+                        Edytuj
+                      </NuxtLink>
+                      <button
+                        class="dropdown-item dropdown-item--danger"
+                        @click="openDeleteModal(item)"
+                      >
+                        <Icon name="mdi:trash-can-outline" />
+                        Usuń
+                      </button>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -143,20 +165,7 @@
 
         <!-- Footer — always visible, outside animated area -->
         <div class="card-footer">
-          <div class="footer-nav">
-            <NuxtLink to="/listings" class="nav-item nav-active">
-              <Icon name="mdi:check-circle" />
-              Twoje ogłoszenia
-            </NuxtLink>
-            <span class="nav-item nav-muted">
-              <Icon name="mdi:close-circle" />
-              Powiadomienia
-            </span>
-            <span class="nav-item nav-muted">
-              <Icon name="mdi:check-circle" />
-              Poszukiwania
-            </span>
-          </div>
+          <div class="footer-nav"></div>
           <div class="footer-actions">
             <NuxtLink to="/listings/add" class="add-btn">
               <Icon name="mdi:plus-circle" />
@@ -171,6 +180,16 @@
       </div>
     </div>
   </div>
+
+  <ConfirmModal
+    :open="deleteModal.open"
+    title="Usuń ogłoszenie"
+    :message="`Czy na pewno chcesz usunąć ogłoszenie &quot;${deleteModal.title}&quot;? Tej operacji nie można cofnąć.`"
+    confirm-label="Usuń"
+    :loading="deleteModal.loading"
+    @confirm="confirmDelete"
+    @cancel="closeDeleteModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -226,6 +245,10 @@ function typeIcon(type: string) {
   );
 }
 
+function statusLabel(status: string) {
+  return { PENDING: "Oczekujące", ACTIVE: "Aktywne", REJECTED: "Odrzucone" }[status] ?? status;
+}
+
 function formatDate(d: string) {
   const date = new Date(d);
   return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getFullYear()).slice(2)}`;
@@ -234,6 +257,46 @@ function formatDate(d: string) {
 async function onLogout() {
   await logout();
   await navigateTo("/auth/login");
+}
+
+// --- delete modal ---
+const { success, error: toastError } = useToast();
+
+const deleteModal = reactive({
+  open: false,
+  id: "",
+  title: "",
+  loading: false,
+});
+
+function openDeleteModal(item: { id: string; title: string }) {
+  deleteModal.id = item.id;
+  deleteModal.title = item.title;
+  deleteModal.open = true;
+}
+
+function closeDeleteModal() {
+  deleteModal.open = false;
+}
+
+async function confirmDelete() {
+  deleteModal.loading = true;
+  try {
+    await $fetch(`/api/listings/${deleteModal.id}` as string, {
+      method: "DELETE",
+    });
+    listingsData.value = {
+      listings: (listingsData.value?.listings ?? []).filter(
+        (l) => l.id !== deleteModal.id,
+      ),
+    };
+    success("Ogłoszenie zostało usunięte.");
+    closeDeleteModal();
+  } catch {
+    toastError("Nie udało się usunąć ogłoszenia.");
+  } finally {
+    deleteModal.loading = false;
+  }
 }
 </script>
 
@@ -259,7 +322,7 @@ async function onLogout() {
   gap: 0.8rem;
   padding: 0.8rem 1.8rem;
   border-radius: 999px;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 600;
   font-family: var(--font-ui);
 }
@@ -325,7 +388,7 @@ async function onLogout() {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 70rem;
+  max-height: 76rem;
 }
 
 .card-header {
@@ -589,6 +652,13 @@ async function onLogout() {
   min-width: 0;
 }
 
+.listing-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
 .listing-name {
   font-size: 1.4rem;
   font-weight: 600;
@@ -598,27 +668,32 @@ async function onLogout() {
   text-overflow: ellipsis;
 }
 
+.listing-status {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+
+  &.status--pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.status--active {
+    background: var(--green-soft);
+    color: var(--green-dark);
+  }
+
+  &.status--rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
 .listing-date {
   font-size: 1.2rem;
   color: var(--text-muted);
-}
-
-.listing-action {
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  border: 1.5px solid var(--green-main);
-  background: var(--green-soft);
-  color: var(--green-dark);
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background 0.12s;
-
-  &:hover {
-    background: #c5e8c8;
-  }
 }
 
 /* ── Footer ── */

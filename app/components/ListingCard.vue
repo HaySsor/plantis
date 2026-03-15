@@ -26,15 +26,13 @@
       </div>
 
       <!-- Attribute chips overlay -->
-      <div v-if="attrChips.length" class="card-attrs">
-        <span
-          v-for="chip in attrChips"
-          :key="chip.label"
-          class="card-attr-chip"
-        >
-          <Icon :name="chip.icon" class="attr-chip-icon" />
-          {{ chip.label }}
-        </span>
+      <div class="card-attrs">
+        <ListingAttrChips
+          variant="compact"
+          :limit="2"
+          :light="light"
+          :difficulty="difficulty"
+        />
       </div>
     </div>
 
@@ -92,41 +90,6 @@ const deliveryLabel = computed(() => {
     BOTH: "Odbiór / Wysyłka",
   };
   return map[props.deliveryMode] ?? props.deliveryMode;
-});
-
-const attrChips = computed(() => {
-  const chips: { icon: string; label: string }[] = [];
-
-  if (props.watering) {
-    const map: Record<string, { icon: string; label: string }> = {
-      LOW: { icon: "mdi:water-off", label: "Sucholubne" },
-      MEDIUM: { icon: "mdi:water", label: "Umiarkowane" },
-      HIGH: { icon: "mdi:water-plus", label: "Wilgociolubne" },
-    };
-    if (map[props.watering]) chips.push(map[props.watering]);
-  }
-
-  if (props.light) {
-    const map: Record<string, { icon: string; label: string }> = {
-      LOW: { icon: "mdi:weather-night", label: "Cień" },
-      MEDIUM: { icon: "mdi:weather-partly-cloudy", label: "Półcień" },
-      HIGH: { icon: "mdi:weather-sunny", label: "Jasne" },
-      FULL_SUN: { icon: "mdi:white-balance-sunny", label: "Pełne słońce" },
-    };
-    if (map[props.light]) chips.push(map[props.light]);
-  }
-
-  if (props.difficulty) {
-    const map: Record<string, { icon: string; label: string }> = {
-      EASY: { icon: "mdi:emoticon-happy-outline", label: "Łatwa" },
-      MEDIUM: { icon: "mdi:emoticon-neutral-outline", label: "Średnia" },
-      HARD: { icon: "mdi:emoticon-sad-outline", label: "Trudna" },
-    };
-    const chip = map[props.difficulty];
-    if (chip) chips.push(chip);
-  }
-
-  return chips.slice(0, 3);
 });
 </script>
 
@@ -265,27 +228,7 @@ const attrChips = computed(() => {
   display: flex;
   gap: 0.5rem;
   padding: 0 1rem;
-  justify-content: center;
-}
-
-.card-attr-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(8px);
-  border-radius: 999px;
-  padding: 0.45rem 1rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d4a35;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.attr-chip-icon {
-  font-size: 1.4rem;
-  color: var(--green-main);
+  justify-content: flex-end;
 }
 
 /* ── Content ── */
