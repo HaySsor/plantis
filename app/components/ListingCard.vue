@@ -262,7 +262,8 @@ const deliveryLabel = computed(() => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  padding-bottom: 0.5rem;
+  max-height: calc(1.35rem * 1.5 * 2);
+  margin-bottom: 0.5rem;
 }
 
 /* ── Owner ── */

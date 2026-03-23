@@ -45,7 +45,7 @@
           <button
             class="action-btn action-btn--reject"
             :disabled="processing"
-            @click="decide('REJECTED')"
+            @click="rejectModal = true"
           >
             <Icon name="mdi:close" />
             Odrzuć
@@ -103,6 +103,29 @@
       </div>
     </template>
   </div>
+
+  <Teleport to="body">
+    <Transition name="modal-fade">
+      <div v-if="rejectModal" class="modal-backdrop" @click.self="rejectModal = false">
+        <div class="modal">
+          <h2 class="modal-title">Odrzuć ogłoszenie</h2>
+          <p class="modal-desc">Podaj powód odrzucenia — użytkownik zobaczy go przy swoim ogłoszeniu.</p>
+          <textarea
+            v-model="rejectReason"
+            class="modal-textarea"
+            placeholder="np. Zdjęcie nieczytelne, opis zbyt krótki..."
+            rows="4"
+          />
+          <div class="modal-actions">
+            <button class="modal-btn modal-btn--cancel" @click="rejectModal = false">Anuluj</button>
+            <button class="modal-btn modal-btn--reject" :disabled="processing" @click="confirmReject">
+              Odrzuć
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -115,19 +138,26 @@ const { data, pending } = await useFetch(`/api/admin/listings/${id}` as string);
 const listing = computed(() => data.value?.listing ?? null);
 
 const processing = ref(false);
+const rejectModal = ref(false);
+const rejectReason = ref("");
 
-async function decide(status: "ACTIVE" | "REJECTED") {
+async function decide(status: "ACTIVE" | "REJECTED", rejectionReason?: string) {
   processing.value = true;
   try {
     await $fetch(`/api/admin/listings/${id}/status` as string, {
       method: "PATCH",
-      body: { status },
+      body: { status, rejectionReason },
     });
     await refreshNuxtData("admin-pending");
     await navigateTo("/zaplecze/listings");
   } finally {
     processing.value = false;
   }
+}
+
+async function confirmReject() {
+  await decide("REJECTED", rejectReason.value);
+  rejectModal.value = false;
 }
 
 function statusLabel(s: string) {
@@ -322,5 +352,103 @@ h1 {
     font-size: 1.4rem;
     color: var(--text-main);
   }
+}
+</style>
+
+<style lang="scss">
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 2rem;
+  padding: 2.8rem;
+  width: 100%;
+  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.modal-title {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: #1a2e20;
+  margin: 0;
+}
+
+.modal-desc {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.modal-textarea {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-soft);
+  font-size: 1.4rem;
+  font-family: var(--font-ui);
+  color: var(--text-main);
+  resize: vertical;
+  min-height: 10rem;
+
+  &:focus {
+    outline: 2px solid var(--green-main);
+    outline-offset: 1px;
+  }
+
+  &::placeholder { color: var(--text-muted); }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-btn {
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  font-size: 1.4rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &--cancel {
+    background: #f0f0f0;
+    color: #444;
+    &:hover:not(:disabled) { background: #e0e0e0; }
+  }
+
+  &--reject {
+    background: #fee2e2;
+    color: #991b1b;
+    &:hover:not(:disabled) { background: #fecaca; }
+  }
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s;
+  .modal { transition: transform 0.2s; }
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+  .modal { transform: scale(0.96); }
 }
 </style>

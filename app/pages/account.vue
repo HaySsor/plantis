@@ -76,10 +76,22 @@
                     <div class="listing-info">
                       <div class="listing-name-row">
                         <span class="listing-name">{{ item.title }}</span>
-                        <span class="listing-status" :class="`status--${item.status.toLowerCase()}`">
+                        <span
+                          class="listing-status"
+                          :class="`status--${item.status.toLowerCase()}`"
+                        >
                           {{ statusLabel(item.status) }}
                         </span>
                       </div>
+                      <p
+                        v-if="
+                          item.status === 'REJECTED' && item.rejectionReason
+                        "
+                        class="rejection-reason"
+                      >
+                        <Icon name="mdi:alert-circle-outline" />
+                        {{ item.rejectionReason }}
+                      </p>
                       <span class="listing-date"
                         >Dodana: {{ formatDate(item.createdAt) }}</span
                       >
@@ -225,8 +237,18 @@ const settingsItems = [
   },
 ];
 
+interface MyListing {
+  id: string;
+  title: string;
+  type: string;
+  status: string;
+  rejectionReason: string | null;
+  createdAt: string;
+  images: { url: string }[];
+}
+
 const { data: listingsData, pending: listingsPending } =
-  await useFetch("/api/listings/my");
+  await useFetch<{ listings: MyListing[] }>("/api/listings/my");
 const myListings = computed(() => listingsData.value?.listings ?? []);
 
 const { data: favoritesData, pending: favoritesPending } = await useFetch(
@@ -246,7 +268,11 @@ function typeIcon(type: string) {
 }
 
 function statusLabel(status: string) {
-  return { PENDING: "Oczekujące", ACTIVE: "Aktywne", REJECTED: "Odrzucone" }[status] ?? status;
+  return (
+    { PENDING: "Oczekujące", ACTIVE: "Aktywne", REJECTED: "Odrzucone" }[
+      status
+    ] ?? status
+  );
 }
 
 function formatDate(d: string) {
@@ -567,7 +593,7 @@ async function confirmDelete() {
 
 .section-label {
   font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text-main);
   margin: 0;
 }
@@ -694,6 +720,20 @@ async function confirmDelete() {
 .listing-date {
   font-size: 1.2rem;
   color: var(--text-muted);
+}
+
+.rejection-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  color: #991b1b;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* ── Footer ── */

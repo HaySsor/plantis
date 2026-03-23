@@ -50,9 +50,12 @@ type ListingItem = {
   user: { name: string } | null;
 };
 
-const { data, pending } = await useFetch<{ items: ListingItem[] }>("/api/listings", {
-  query: { pageSize: 4 },
-});
+const { data, pending } = await useFetch<{ items: ListingItem[] }>(
+  "/api/listings",
+  {
+    query: { pageSize: 4 },
+  },
+);
 
 const listings = computed(() => data.value?.items ?? []);
 </script>
@@ -63,7 +66,6 @@ const listings = computed(() => data.value?.items ?? []);
   flex-direction: column;
   gap: 2rem;
   padding: 2rem 0;
-  margin-top: 20px;
 }
 
 .recent-header {
@@ -109,8 +111,12 @@ h2 {
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .empty {

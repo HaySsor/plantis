@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
       title: true,
       type: true,
       status: true,
+      rejectionReason: true,
       createdAt: true,
       images: { select: { url: true }, orderBy: { order: "asc" }, take: 1 },
     },

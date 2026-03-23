@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="home">
     <HeroSection
       badge="Dołącz do eko-rewolucji"
       title="Podaruj roślinom"
@@ -8,19 +8,36 @@
       :show-media="true"
     >
       <template #buttons>
-        <VButton :is-button="false" href="/listings" type="primary">Przeglądaj rośliny</VButton>
-        <VButton :is-button="true" type="light">Jak to działa? <Icon name="mdi:arrow-right" /></VButton>
+        <VButton :is-button="false" href="/listings" type="primary"
+          >Przeglądaj rośliny</VButton
+        >
+        <VButton :is-button="false" href="/how-it-works" type="light"
+          >Jak to działa? <Icon name="mdi:arrow-right"
+        /></VButton>
       </template>
     </HeroSection>
-    <ListingSearchBar
-      class="hero-search"
-      :navigate-on-submit="true"
-      :navigate-to-path="'/listings'"
-    />
+
+    <HomeHowItWorks />
+
+    <HomeCities />
+
     <HomeRecentListings />
+
+    <HomeStats />
+
+    <HomeCtaBanner v-if="!user" />
   </main>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { user } = useAuth();
+</script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding-bottom: 2rem;
+}
+</style>

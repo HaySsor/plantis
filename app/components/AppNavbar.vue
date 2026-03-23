@@ -80,8 +80,8 @@
   </header>
 
   <nav class="bottom-nav" aria-label="Mobilne menu">
-    <a
-      href="/how-it-works"
+    <NuxtLink
+      to="/how-it-works"
       class="bottom-link"
     >
       <Icon
@@ -90,7 +90,7 @@
         class="bottom-link-icon"
       />
       <span>Jak działa</span>
-    </a>
+    </NuxtLink>
     <NuxtLink
       to="/listings"
       class="bottom-link"
@@ -299,9 +299,19 @@ onUnmounted(() => {
 }
 
 .nav-desktop a:hover {
+  color: var(--green-dark);
   text-decoration: underline;
   text-decoration-color: var(--green-main);
-  text-underline-offset: 2px;
+  text-underline-offset: 4px;
+}
+
+.nav-desktop a.router-link-active {
+  color: var(--green-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--green-main);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .desktop-actions {
@@ -487,9 +497,14 @@ onUnmounted(() => {
   letter-spacing: 0.02em;
 }
 
+.bottom-link.router-link-active,
 .bottom-link.is-active,
 .bottom-link:hover {
   background: var(--green-soft);
   color: var(--green-dark);
+}
+
+.bottom-link.router-link-active span {
+  font-weight: 700;
 }
 </style>

@@ -1,23 +1,44 @@
 <template>
+  <AppLoader :show="!appReady" />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
   <AppToast />
 </template>
 
+<script setup lang="ts">
+const { fetchMe } = useAuth();
+const appReady = ref(false);
+
+useHead({
+  style: [{ innerHTML: 'body { visibility: hidden; }', id: 'init-hide' }],
+});
+
+onMounted(async () => {
+  document.getElementById('init-hide')?.remove();
+  document.body.style.visibility = 'visible';
+
+  await Promise.all([
+    fetchMe().catch(() => {}),
+    new Promise(resolve => setTimeout(resolve, 1400)),
+  ]);
+  appReady.value = true;
+});
+</script>
+
 <style lang="scss">
 :root {
-  --bg: #f4f6f2;
+  --bg: #F9F6F0;
   --surface: #ffffff;
-  --green-soft: #e5ebe0;
-  --green-main: #78a87e;
-  --green-m-hover: #68987e;
-  --green-dark: #2e5235;
-  --text-main: #283530;
-  --text-muted: #607868;
-  --border-soft: #d5e2d8;
-  --dark-text: #1a2e20;
-  --gray-text: #8a9490;
+  --green-soft: #DFF0E5;
+  --green-main: #52916B;
+  --green-m-hover: #437d5a;
+  --green-dark: #1E3D2F;
+  --text-main: #1E3D2F;
+  --text-muted: #5a7a66;
+  --border-soft: #dde8e2;
+  --dark-text: #1E3D2F;
+  --gray-text: #8a9e94;
   --yellow-soft: #fef5d4;
   --yellow-main: #d4aa3a;
   --yellow-dark: #7a5c0a;
@@ -40,7 +61,7 @@ body {
   margin: 0;
   font-family: var(--font-ui);
   font-size: 1.6rem;
-  background: #f4f6f2;
+  background: var(--bg);
   color: var(--text-main);
 }
 

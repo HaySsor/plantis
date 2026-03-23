@@ -14,6 +14,14 @@
         <h1>Edytuj ogłoszenie</h1>
         <p class="subtitle">Zaktualizuj informacje o roślinie</p>
 
+        <div v-if="listing.status === 'REJECTED' && listing.rejectionReason" class="rejection-banner">
+          <Icon name="mdi:alert-circle-outline" class="rejection-icon" />
+          <div>
+            <strong>Ogłoszenie zostało odrzucone</strong>
+            <p>{{ listing.rejectionReason }}</p>
+          </div>
+        </div>
+
         <ListingForm
           mode="edit"
           :initial-data="listing"
@@ -106,6 +114,37 @@ h1 {
   font-size: 1.6rem;
   color: var(--text-muted);
   margin: -1.6rem 0 0;
+}
+
+.rejection-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  border-left: 4px solid #ef4444;
+  border-radius: 1.2rem;
+  padding: 1.6rem 2rem;
+  color: #991b1b;
+
+  strong {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  p {
+    font-size: 1.4rem;
+    margin: 0;
+    line-height: 1.6;
+    color: #b91c1c;
+  }
+}
+
+.rejection-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
 }
 
 .loading-state {

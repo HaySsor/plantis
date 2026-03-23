@@ -59,7 +59,7 @@
               <button
                 class="dropdown-item dropdown-item--danger"
                 :disabled="processing === item.id"
-                @click="decide(item.id, 'REJECTED')"
+                @click="openRejectModal(item.id)"
               >
                 <Icon name="mdi:close" />
                 Odrzuć
@@ -70,6 +70,47 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal odrzucenia -->
+  <Teleport to="body">
+    <Transition name="modal-fade">
+      <div
+        v-if="rejectModal.open"
+        class="modal-backdrop"
+        @click.self="closeRejectModal"
+      >
+        <div class="modal">
+          <h2 class="modal-title">Odrzuć ogłoszenie</h2>
+          <p class="modal-desc">
+            Podaj powód odrzucenia — użytkownik zobaczy go przy swoim
+            ogłoszeniu.
+          </p>
+          <textarea
+            v-model="rejectModal.reason"
+            class="modal-textarea"
+            placeholder="np. Zdjęcie nieczytelne, opis zbyt krótki..."
+            rows="4"
+            autofocus
+          />
+          <div class="modal-actions">
+            <button
+              class="modal-btn modal-btn--cancel"
+              @click="closeRejectModal"
+            >
+              Anuluj
+            </button>
+            <button
+              class="modal-btn modal-btn--reject"
+              :disabled="processing === rejectModal.id"
+              @click="confirmReject"
+            >
+              Odrzuć
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -86,19 +127,48 @@ interface PendingListing {
   user: { name: string | null; email: string };
 }
 
-const { data, pending } = await useFetch<{ listings: PendingListing[] }>("/api/admin/listings/pending", {
-  key: "admin-pending",
-});
+const { data, pending } = await useFetch<{ listings: PendingListing[] }>(
+  "/api/admin/listings/pending",
+  {
+    key: "admin-pending",
+  },
+);
 const listings = computed(() => data.value?.listings ?? []);
 
 const processing = ref<string | null>(null);
 
-async function decide(id: string, status: "ACTIVE" | "REJECTED") {
+const rejectModal = reactive({
+  open: false,
+  id: null as string | null,
+  reason: "",
+});
+
+function openRejectModal(id: string) {
+  rejectModal.id = id;
+  rejectModal.reason = "";
+  rejectModal.open = true;
+}
+
+function closeRejectModal() {
+  rejectModal.open = false;
+}
+
+async function confirmReject() {
+  if (!rejectModal.id) return;
+  await decide(rejectModal.id, "REJECTED", rejectModal.reason);
+  closeRejectModal();
+}
+
+async function decide(
+  id: string,
+  status: "ACTIVE" | "REJECTED",
+  rejectionReason?: string,
+) {
   processing.value = id;
   try {
     await $fetch(`/api/admin/listings/${id}/status` as string, {
       method: "PATCH",
-      body: { status },
+      body: { status, rejectionReason },
     });
     await refreshNuxtData("admin-pending");
   } finally {
@@ -160,8 +230,9 @@ h1 {
 }
 
 .listing-grid {
-  display: flex;
+  display: grid;
   flex-direction: column;
+  grid-template-columns: 1fr 1fr;
   gap: 1.2rem;
 }
 
@@ -254,5 +325,122 @@ h1 {
 
 .card-actions {
   flex-shrink: 0;
+}
+</style>
+
+<style lang="scss">
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 2rem;
+  padding: 2.8rem;
+  width: 100%;
+  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.modal-title {
+  font-family: var(--font-title);
+  font-size: 2.2rem;
+  color: #1a2e20;
+  margin: 0;
+}
+
+.modal-desc {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.modal-textarea {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-soft);
+  font-size: 1.4rem;
+  font-family: var(--font-ui);
+  color: var(--text-main);
+  resize: vertical;
+  min-height: 10rem;
+
+  &:focus {
+    outline: 2px solid var(--green-main);
+    outline-offset: 1px;
+  }
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-btn {
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  font-size: 1.4rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--cancel {
+    background: #f0f0f0;
+    color: #444;
+
+    &:hover:not(:disabled) {
+      background: #e0e0e0;
+    }
+  }
+
+  &--reject {
+    background: #fee2e2;
+    color: #991b1b;
+
+    &:hover:not(:disabled) {
+      background: #fecaca;
+    }
+  }
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s;
+
+  .modal {
+    transition: transform 0.2s;
+  }
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+
+  .modal {
+    transform: scale(0.96);
+  }
 }
 </style>

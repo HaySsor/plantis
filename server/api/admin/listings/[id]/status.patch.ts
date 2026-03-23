@@ -7,14 +7,17 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
   if (!id) throw createError({ statusCode: 400, statusMessage: "Missing id" });
 
-  const { status } = await readBody(event);
+  const { status, rejectionReason } = await readBody(event);
   if (!["ACTIVE", "REJECTED"].includes(status)) {
     throw createError({ statusCode: 400, statusMessage: "Status must be ACTIVE or REJECTED" });
   }
 
   const listing = await prisma.listing.update({
     where: { id },
-    data: { status },
+    data: {
+      status,
+      rejectionReason: status === "REJECTED" ? (rejectionReason?.trim() || null) : null,
+    },
     select: { id: true, status: true },
   });
 

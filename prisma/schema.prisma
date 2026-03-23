@@ -95,7 +95,8 @@ model Listing {
   height       PlantHeight?
   position     PlantPosition?
   difficulty   Difficulty?
-  petFriendly  Boolean?
+  petFriendly      Boolean?
+  rejectionReason  String?
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   images       ListingImage[]

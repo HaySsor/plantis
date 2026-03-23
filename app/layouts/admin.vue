@@ -3,7 +3,7 @@
     <aside class="admin-sidebar">
       <div class="admin-brand">
         <Icon name="mdi:leaf" class="brand-icon" />
-        <span>Plantis <em>admin</em></span>
+        <span>ZielonaPrzesadzka <em>admin</em></span>
       </div>
 
       <nav class="admin-nav">

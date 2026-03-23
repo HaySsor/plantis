@@ -7,6 +7,18 @@ export type AuthUser = {
   role: "USER" | "ADMIN" | "EDITOR";
 };
 
+export async function getSessionUser(event: any): Promise<AuthUser | null> {
+  const token = getCookie(event, "session");
+  if (!token) return null;
+  const tokenHash = hashToken(token);
+  const session = await prisma.session.findUnique({
+    where: { tokenHash },
+    include: { user: true },
+  });
+  if (!session || session.expiresAt <= new Date()) return null;
+  return { id: session.user.id, email: session.user.email, role: session.user.role };
+}
+
 export async function requireUser(event: any): Promise<AuthUser> {
   const token = getCookie(event, "session");
 
