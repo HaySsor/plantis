@@ -39,12 +39,14 @@ const cities = [
   font-size: 2.4rem;
   font-family: var(--font-title);
   color: var(--green-dark);
+  text-align: center;
   margin: 0;
 }
 
 .cities-grid {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.8rem;
 }
 
@@ -60,7 +62,10 @@ const cities = [
   font-weight: 500;
   color: var(--text-main);
   text-decoration: none;
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
     border-color: var(--green-main);

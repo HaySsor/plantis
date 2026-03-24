@@ -247,8 +247,9 @@ interface MyListing {
   images: { url: string }[];
 }
 
-const { data: listingsData, pending: listingsPending } =
-  await useFetch<{ listings: MyListing[] }>("/api/listings/my");
+const { data: listingsData, pending: listingsPending } = await useFetch<{
+  listings: MyListing[];
+}>("/api/listings/my");
 const myListings = computed(() => listingsData.value?.listings ?? []);
 
 const { data: favoritesData, pending: favoritesPending } = await useFetch(
@@ -414,7 +415,10 @@ async function confirmDelete() {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 76rem;
+
+  @media (min-width: 640px) {
+    max-height: 76rem;
+  }
 }
 
 .card-header {
@@ -426,6 +430,7 @@ async function confirmDelete() {
   padding: 2rem 2.4rem 1.6rem;
   border-bottom: 1px solid var(--border-soft);
   flex-shrink: 0;
+  background-color: #f4f5f4;
 }
 
 .card-header-right {
@@ -490,8 +495,11 @@ async function confirmDelete() {
   flex-direction: row;
   flex: 1;
   overflow: hidden;
-  min-height: 48rem;
   position: relative;
+
+  @media (min-width: 640px) {
+    min-height: 48rem;
+  }
 }
 
 /* Dashboard pane — always occupies remaining space */
@@ -580,6 +588,8 @@ async function confirmDelete() {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  min-width: 0;
+  overflow: hidden;
 
   & + & {
     border-top: 1px solid var(--border-soft);
@@ -592,7 +602,7 @@ async function confirmDelete() {
 }
 
 .section-label {
-  font-size: 1.4rem;
+  font-size: 2rem;
   font-weight: 500;
   color: var(--text-main);
   margin: 0;
@@ -621,9 +631,12 @@ async function confirmDelete() {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  max-height: 28rem;
-  overflow-y: auto;
   overscroll-behavior: contain;
+
+  @media (min-width: 640px) {
+    max-height: 28rem;
+    overflow-y: auto;
+  }
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -645,6 +658,8 @@ async function confirmDelete() {
   border-radius: 1.2rem;
   border: 1px solid var(--border-soft);
   box-shadow: 0 0 10px var(--bg);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .listing-thumb {
@@ -676,6 +691,7 @@ async function confirmDelete() {
   flex-direction: column;
   gap: 0.2rem;
   min-width: 0;
+  overflow: hidden;
 }
 
 .listing-name-row {
@@ -683,9 +699,15 @@ async function confirmDelete() {
   align-items: center;
   gap: 0.6rem;
   min-width: 0;
+  overflow: hidden;
+
+  @media (max-width: 639px) {
+    display: block;
+  }
 }
 
 .listing-name {
+  display: block;
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--text-main);
@@ -743,6 +765,7 @@ async function confirmDelete() {
   gap: 1.2rem;
   padding: 1.6rem 2rem;
   border-top: 1px solid var(--border-soft);
+  background-color: #f4f5f4;
 
   @media (min-width: 640px) {
     flex-direction: row;
@@ -814,7 +837,7 @@ async function confirmDelete() {
   padding: 0.9rem 1.4rem;
   border-radius: 999px;
   border: 1px solid #fca5a5;
-  background: transparent;
+  background: white;
   color: #b91c1c;
   font-size: 1.3rem;
   font-family: var(--font-ui);

@@ -6,14 +6,14 @@ export default defineNuxtConfig({
   fonts: {
     families: [
       {
-        name: "Roboto",
+        name: "Manrope",
         provider: "google",
-        weights: [300, 400, 600],
+        weights: [300, 400, 500, 600, 700],
       },
       {
-        name: "Outfit",
+        name: "Noto Serif",
         provider: "google",
-        weights: [500, 600, 900],
+        weights: [400, 600, 700, 900],
       },
       {
         name: "Cormorant Garamond",

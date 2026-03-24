@@ -30,7 +30,7 @@ const { color, textColor, icon, isUppercase } = defineProps({
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 6px 20px 6px 12px;
   border-radius: 25px;
   gap: 8px;
   font-size: 1.2rem;

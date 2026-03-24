@@ -5,8 +5,8 @@
   >
     <Badge
       v-if="badge"
-      color="#d9f0d7"
-      text-color="#7bbf8a"
+      color="#B3CEB2"
+      text-color="#FFFFFF"
       :is-uppercase="true"
       icon="mdi-leaf"
       >{{ badge }}</Badge

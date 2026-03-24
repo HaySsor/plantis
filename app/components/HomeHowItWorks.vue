@@ -39,7 +39,9 @@
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
-  padding: 2rem 0 1rem;
+  padding: 2rem;
+  background-color: #eff1ee;
+  border-radius: 20px;
 }
 
 .how-header {
@@ -54,7 +56,7 @@
 
   p {
     font-size: 1.6rem;
-    color: var(--text-muted);
+    color: var(--text-main);
     margin: 0;
   }
 }

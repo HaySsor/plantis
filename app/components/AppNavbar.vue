@@ -32,7 +32,9 @@
         placeholder="Szukaj"
         aria-label="Szukaj"
         @keydown.esc="closeMobileSearch"
-        @keydown.enter="navigateSearch(($event.target as HTMLInputElement).value)"
+        @keydown.enter="
+          navigateSearch(($event.target as HTMLInputElement).value)
+        "
       />
     </div>
 
@@ -64,7 +66,9 @@
           placeholder="Szukaj"
           aria-label="Szukaj"
           @keydown.esc="closeDesktopSearch"
-          @keydown.enter="navigateSearch(($event.target as HTMLInputElement).value)"
+          @keydown.enter="
+            navigateSearch(($event.target as HTMLInputElement).value)
+          "
         />
       </div>
       <span class="divider" aria-hidden="true"></span>
@@ -80,10 +84,7 @@
   </header>
 
   <nav class="bottom-nav" aria-label="Mobilne menu">
-    <NuxtLink
-      to="/how-it-works"
-      class="bottom-link"
-    >
+    <NuxtLink to="/how-it-works" class="bottom-link">
       <Icon
         size="24"
         name="mdi:book-open-page-variant-outline"
@@ -91,15 +92,8 @@
       />
       <span>Jak działa</span>
     </NuxtLink>
-    <NuxtLink
-      to="/listings"
-      class="bottom-link"
-    >
-      <Icon
-        size="24"
-        name="mdi:flower-outline"
-        class="bottom-link-icon"
-      />
+    <NuxtLink to="/listings" class="bottom-link">
+      <Icon size="24" name="mdi:flower-outline" class="bottom-link-icon" />
       <span>Ogłoszenia</span>
     </NuxtLink>
     <a
@@ -219,7 +213,7 @@ onUnmounted(() => {
   max-width: 1300px;
   margin: 0 auto;
   background: white;
-  border: 1px solid #d5ead9;
+  border: 1px solid #8fa98f;
   border-radius: 22px;
   padding: 1rem 1.35rem;
   display: flex;
@@ -395,7 +389,7 @@ onUnmounted(() => {
   width: 4rem;
   height: 4rem;
   padding: 0.3rem;
-  border: 1px solid #d6e6d9;
+  border: 1px solid #e1e3e0;
   border-radius: 999px;
   background: #fff;
   overflow: hidden;
@@ -418,7 +412,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #eff7f0;
+  background: #eff1ee;
   cursor: pointer;
 }
 
@@ -444,7 +438,7 @@ onUnmounted(() => {
 .divider {
   width: 1px;
   height: 2.1rem;
-  background: #d7ddd8;
+  background: #8e918f;
 }
 
 .bottom-nav {

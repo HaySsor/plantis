@@ -11,16 +11,16 @@ const { fetchMe } = useAuth();
 const appReady = ref(false);
 
 useHead({
-  style: [{ innerHTML: 'body { visibility: hidden; }', id: 'init-hide' }],
+  style: [{ innerHTML: "body { visibility: hidden; }", id: "init-hide" }],
 });
 
 onMounted(async () => {
-  document.getElementById('init-hide')?.remove();
-  document.body.style.visibility = 'visible';
+  document.getElementById("init-hide")?.remove();
+  document.body.style.visibility = "visible";
 
   await Promise.all([
     fetchMe().catch(() => {}),
-    new Promise(resolve => setTimeout(resolve, 1400)),
+    new Promise((resolve) => setTimeout(resolve, 1400)),
   ]);
   appReady.value = true;
 });
@@ -28,22 +28,22 @@ onMounted(async () => {
 
 <style lang="scss">
 :root {
-  --bg: #F9F6F0;
+  --bg: ##eff1ee;
   --surface: #ffffff;
-  --green-soft: #DFF0E5;
-  --green-main: #52916B;
+  --green-soft: #dff0e5;
+  --green-main: #789880;
   --green-m-hover: #437d5a;
-  --green-dark: #1E3D2F;
-  --text-main: #1E3D2F;
-  --text-muted: #5a7a66;
-  --border-soft: #dde8e2;
-  --dark-text: #1E3D2F;
-  --gray-text: #8a9e94;
+  --green-dark: #1e3d2f;
+  --text-main: #1e3d2f;
+  --text-muted: #4c644e;
+  --border-soft: #a9aca9;
+  --dark-text: #022110;
+  --gray-text: #757875;
   --yellow-soft: #fef5d4;
   --yellow-main: #d4aa3a;
   --yellow-dark: #7a5c0a;
-  --font-ui: "Roboto", "Segoe UI", sans-serif;
-  --font-title: "Outfit", "Segoe UI", sans-serif;
+  --font-ui: "Manrope", "Segoe UI", sans-serif;
+  --font-title: "Noto Serif", Georgia, serif;
   --font-quote: "Cormorant Garamond", Georgia, serif;
 }
 
