@@ -70,16 +70,18 @@ const whyItems = [
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-  padding: 0 1.6rem 6rem;
+  padding: 1.6rem;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #eff1ee;
+  border-radius: 20px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
-    padding: 0 2.4rem 4rem;
+    padding: 4rem 2.4rem 4rem;
   }
   @media (min-width: 1200px) {
-    gap: 4rem;
+    gap: 2.4rem;
   }
 }
 
@@ -97,5 +99,6 @@ const whyItems = [
   display: flex;
   justify-content: center;
   padding-bottom: 8rem;
+  margin-top: 30px;
 }
 </style>

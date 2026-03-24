@@ -100,6 +100,8 @@ function goBack() {
   direction.value = "back";
   activeSection.value = null;
 }
+
+defineExpose({ navigate });
 </script>
 
 <style lang="scss" scoped>

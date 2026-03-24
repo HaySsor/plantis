@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
       email: session.user.email,
       name: session.user.name,
       role: session.user.role,
+      emailVerified: session.user.emailVerified,
     },
   };
 });

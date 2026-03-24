@@ -5,6 +5,7 @@ export type AuthUser = {
   id: string;
   email: string;
   role: "USER" | "ADMIN" | "EDITOR";
+  emailVerified: boolean;
 };
 
 export async function getSessionUser(event: any): Promise<AuthUser | null> {
@@ -16,7 +17,7 @@ export async function getSessionUser(event: any): Promise<AuthUser | null> {
     include: { user: true },
   });
   if (!session || session.expiresAt <= new Date()) return null;
-  return { id: session.user.id, email: session.user.email, role: session.user.role };
+  return { id: session.user.id, email: session.user.email, role: session.user.role, emailVerified: session.user.emailVerified };
 }
 
 export async function requireUser(event: any): Promise<AuthUser> {
@@ -37,5 +38,5 @@ export async function requireUser(event: any): Promise<AuthUser> {
     throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
   }
 
-  return { id: session.user.id, email: session.user.email, role: session.user.role };
+  return { id: session.user.id, email: session.user.email, role: session.user.role, emailVerified: session.user.emailVerified };
 }

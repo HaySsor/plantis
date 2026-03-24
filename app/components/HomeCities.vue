@@ -56,8 +56,8 @@ const cities = [
   gap: 0.5rem;
   padding: 0.8rem 1.6rem;
   border-radius: 999px;
-  border: 2px solid var(--border-soft);
-  background: var(--surface);
+  border: 2px solid #d9c5b2;
+  background: #ffeedf;
   font-size: 1.4rem;
   font-weight: 500;
   color: var(--text-main);
@@ -68,14 +68,12 @@ const cities = [
     color 0.15s;
 
   &:hover {
-    border-color: var(--green-main);
-    background: var(--green-soft);
-    color: var(--green-dark);
+    background: #f4dfcb;
   }
 }
 
 .city-icon {
   font-size: 1.6rem;
-  color: var(--green-main);
+  color: #857464;
 }
 </style>

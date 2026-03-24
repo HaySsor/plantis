@@ -1,11 +1,5 @@
 <template>
   <main class="listings-page">
-    <ListingSearchBar
-      :initial-query="q"
-      :initial-location="city"
-      @submit="onSearch"
-    />
-
     <!-- Mobile: pasek z przyciskiem filtrów -->
     <div class="mobile-bar">
       <div class="type-chips-row">
@@ -622,8 +616,6 @@ function pluralizeListings(n: number) {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-    background: var(--surface);
-    border: 1px solid var(--border-soft);
     border-radius: 2rem;
     padding: 2rem 1.6rem;
   }

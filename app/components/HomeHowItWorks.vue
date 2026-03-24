@@ -64,7 +64,7 @@
 .steps-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.6rem;
+  gap: 20px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);

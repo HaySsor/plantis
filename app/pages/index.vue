@@ -22,10 +22,6 @@
     <HomeCities />
 
     <HomeRecentListings />
-
-    <HomeStats />
-
-    <HomeCtaBanner v-if="!user" />
   </main>
 </template>
 

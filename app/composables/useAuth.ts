@@ -1,4 +1,4 @@
-type AuthUser = { id: string; email: string; name: string | null; role: "USER" | "ADMIN" | "EDITOR" } | null;
+type AuthUser = { id: string; email: string; name: string | null; role: "USER" | "ADMIN" | "EDITOR"; emailVerified: boolean } | null;
 
 export function useAuth() {
   const user = useState<AuthUser>("auth:user", () => null);

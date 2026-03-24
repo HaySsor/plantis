@@ -35,7 +35,6 @@ withDefaults(
   align-items: center;
   text-align: center;
   gap: 1.6rem;
-  box-shadow: 0 4px 24px rgba(180, 120, 100, 0.1);
 }
 
 .step-icon-wrap {

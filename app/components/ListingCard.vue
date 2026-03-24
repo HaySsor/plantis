@@ -101,16 +101,15 @@ const deliveryLabel = computed(() => {
   background: #fff;
   border-radius: 2.4rem;
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
   padding: 1.2rem 1.2rem 1.6rem;
   gap: 0;
+  border: 1px solid transparent;
   transition:
     transform 0.18s ease,
-    box-shadow 0.18s ease;
-
+    border-color 0.18s ease;
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(60, 100, 70, 0.14);
+    border-color: #c5c7c4;
   }
 }
 
@@ -127,7 +126,7 @@ const deliveryLabel = computed(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: #f0f0ee;
+  background: #ffeedf;
   border-radius: 999px;
   padding: 0.8rem 1.1rem 0.8rem 0.8rem;
   font-size: 1.3rem;
@@ -144,7 +143,7 @@ const deliveryLabel = computed(() => {
 
 .loc-icon {
   font-size: 1.4rem;
-  color: var(--green-main);
+  color: #857464;
   flex-shrink: 0;
 }
 
@@ -236,7 +235,7 @@ const deliveryLabel = computed(() => {
   padding: 1.2rem 0.4rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 10px;
   flex: 1;
 }
 

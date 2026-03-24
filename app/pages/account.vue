@@ -27,10 +27,23 @@
         <div class="card-header">
           <h2 class="card-title">Witaj, {{ user.name }}!</h2>
           <div class="card-header-right">
-            <div class="rank-badge">
-              <Icon name="mdi:shield-check-outline" />
-              Zaufany użytkownik
-            </div>
+            <button
+              v-if="user.emailVerified"
+              class="rank-badge rank-badge--verified"
+              disabled
+            >
+              <Icon name="mdi:check-decagram" />
+              Potwierdzony użytkownik
+            </button>
+            <button
+              v-else
+              class="rank-badge rank-badge--unverified"
+              title="Potwierdź e-mail, aby uzyskać status zaufanego użytkownika"
+              @click="openVerifyHint"
+            >
+              <Icon name="mdi:account-outline" />
+              Zwykły użytkownik
+            </button>
             <button
               class="gear-btn"
               :class="{ active: showSettings }"
@@ -75,7 +88,11 @@
                     </div>
                     <div class="listing-info">
                       <div class="listing-name-row">
-                        <span class="listing-name">{{ item.title }}</span>
+                        <NuxtLink
+                          :to="`/listings/${item.id}`"
+                          class="listing-name"
+                          >{{ item.title }}</NuxtLink
+                        >
                         <span
                           class="listing-status"
                           :class="`status--${item.status.toLowerCase()}`"
@@ -152,15 +169,16 @@
                       />
                     </div>
                     <div class="listing-info">
-                      <span class="listing-name">{{ item.title }}</span>
+                      <NuxtLink
+                        :to="`/listings/${item.id}`"
+                        class="listing-name"
+                        >{{ item.title }}</NuxtLink
+                      >
                       <span class="listing-date">{{ item.city }}</span>
                     </div>
-                    <NuxtLink
-                      :to="`/listings/${item.id}`"
-                      class="listing-action"
-                    >
-                      Podgląd
-                    </NuxtLink>
+                    <button class="fav-remove-btn" @click="removeFavorite(item.id)">
+                      <Icon name="mdi:heart" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -170,7 +188,37 @@
           <!-- Settings pane -->
           <div class="settings-pane">
             <div class="settings-inner">
-              <AccountSettingsPanel :items="settingsItems" @logout="onLogout" />
+              <AccountSettingsPanel ref="settingsPanel" :items="settingsItems" @logout="onLogout">
+                <template #profil>
+                  <div class="profil-section">
+                    <h2 class="section-title">Profil</h2>
+                    <div class="settings-group-inner">
+                      <!-- Email verification row -->
+                      <div class="ios-row">
+                        <span class="ios-row-icon" :class="user.emailVerified ? 'ios-row-icon--ok' : 'ios-row-icon--warn'">
+                          <Icon :name="user.emailVerified ? 'mdi:check-decagram' : 'mdi:email-alert-outline'" />
+                        </span>
+                        <div class="ios-row-body">
+                          <span class="ios-row-label">E-mail</span>
+                          <span class="ios-row-value" :class="user.emailVerified ? 'value--ok' : 'value--warn'">
+                            {{ user.emailVerified ? 'Potwierdzony' : 'Niepotwierdzony' }}
+                          </span>
+                        </div>
+                        <button
+                          v-if="!user.emailVerified"
+                          class="ios-row-action"
+                          :disabled="verifyLoading"
+                          @click="sendVerification"
+                        >
+                          {{ verifyLoading ? '...' : 'Wyślij link' }}
+                        </button>
+                        <Icon v-else name="mdi:check" class="ios-row-check" />
+                      </div>
+                    </div>
+                    <p v-if="verifyMsg" class="verify-msg" :class="verifyMsgType">{{ verifyMsg }}</p>
+                  </div>
+                </template>
+              </AccountSettingsPanel>
             </div>
           </div>
         </div>
@@ -214,6 +262,31 @@ const userInitial = computed(() =>
 );
 
 const showSettings = ref(false);
+const settingsPanel = ref<{ navigate: (key: string) => void } | null>(null);
+
+function openVerifyHint() {
+  showSettings.value = true;
+  nextTick(() => settingsPanel.value?.navigate("profil"));
+}
+
+const verifyLoading = ref(false);
+const verifyMsg = ref("");
+const verifyMsgType = ref<"ok" | "error">("ok");
+
+async function sendVerification() {
+  verifyLoading.value = true;
+  verifyMsg.value = "";
+  try {
+    await $fetch("/api/auth/send-verification", { method: "POST" });
+    verifyMsg.value = "Link weryfikacyjny został wysłany. Sprawdź skrzynkę.";
+    verifyMsgType.value = "ok";
+  } catch (e: any) {
+    verifyMsg.value = e?.data?.statusMessage ?? "Wystąpił błąd. Spróbuj ponownie.";
+    verifyMsgType.value = "error";
+  } finally {
+    verifyLoading.value = false;
+  }
+}
 
 const settingsItems = [
   {
@@ -252,10 +325,16 @@ const { data: listingsData, pending: listingsPending } = await useFetch<{
 }>("/api/listings/my");
 const myListings = computed(() => listingsData.value?.listings ?? []);
 
-const { data: favoritesData, pending: favoritesPending } = await useFetch(
+const { data: favoritesData, pending: favoritesPending, refresh: refreshFavorites } = await useFetch(
   "/api/favorites/listings",
 );
 const myFavorites = computed(() => favoritesData.value?.items ?? []);
+
+const { toggle: toggleFavorite } = useFavorites();
+async function removeFavorite(id: string) {
+  await toggleFavorite(id);
+  await refreshFavorites();
+}
 
 function typeIcon(type: string) {
   return (
@@ -453,11 +532,26 @@ async function confirmDelete() {
   gap: 0.5rem;
   padding: 0.5rem 1.2rem;
   border-radius: 999px;
-  border: 1.5px solid var(--green-main);
-  background: var(--green-soft);
-  color: var(--green-dark);
   font-size: 1.3rem;
   font-weight: 600;
+  cursor: default;
+  font-family: var(--font-ui);
+
+  &--verified {
+    border: 1.5px solid var(--green-main);
+    background: var(--green-soft);
+    color: var(--green-dark);
+  }
+
+  &--unverified {
+    border: 1.5px solid #d1b87a;
+    background: #fef9ec;
+    color: #7a5c1e;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: #fdf0c4; }
+  }
 }
 
 .gear-btn {
@@ -830,6 +924,26 @@ async function confirmDelete() {
   }
 }
 
+.fav-remove-btn {
+  flex-shrink: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  border: 1.5px solid #fca5a5;
+  background: #fff;
+  color: #e05a7a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #fef2f2;
+  }
+}
+
 .logout-btn {
   display: inline-flex;
   align-items: center;
@@ -848,6 +962,105 @@ async function confirmDelete() {
   &:hover {
     background: #fef2f2;
   }
+}
+
+/* ── Profil section ── */
+.section-title {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0 0 1.2rem;
+}
+
+.profil-section {
+  padding: 0 1.2rem 1.6rem;
+}
+
+.settings-group-inner {
+  border-radius: 1.4rem;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+/* iOS-style row */
+.ios-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.1rem 1.4rem;
+}
+
+.ios-row-icon {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  color: #fff;
+  flex-shrink: 0;
+
+  &--ok   { background: var(--green-main); }
+  &--warn { background: #d97706; }
+}
+
+.ios-row-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.ios-row-label {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.ios-row-value {
+  font-size: 1.3rem;
+  font-weight: 500;
+
+  &.value--ok   { color: var(--green-main); }
+  &.value--warn { color: #d97706; }
+}
+
+.ios-row-action {
+  flex-shrink: 0;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--green-main);
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover    { background: #c5e8c8; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.ios-row-check {
+  font-size: 2rem;
+  color: var(--green-main);
+  flex-shrink: 0;
+}
+
+.verify-msg {
+  font-size: 1.3rem;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1.2rem;
+  margin-top: 0.8rem;
+
+  &.ok    { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  &.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 }
 
 /* ── Misc ── */

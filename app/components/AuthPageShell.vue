@@ -53,7 +53,7 @@ withDefaults(
 
   @media (min-width: 768px) {
     display: grid;
-    grid-template-columns: 1.5fr minmax(400px, 1fr);
+    grid-template-columns: 1.5fr minmax(600px, 1fr);
     gap: 40px;
     min-height: calc(100svh - 100px);
     align-items: center;
@@ -112,9 +112,7 @@ withDefaults(
   height: max-content;
 
   @media (min-width: 768px) {
-    padding: 40px;
     gap: 30px;
-    box-shadow: 0 10px 24px rgba(123, 191, 138, 0.34);
     background-color: white;
   }
 }
