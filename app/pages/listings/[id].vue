@@ -105,10 +105,15 @@
                 listing.user?.name ?? "Użytkownik"
               }}</span>
               <span class="owner-subtitle">Opiekun rośliny</span>
-              <span class="owner-badge">
-                <Icon name="mdi:leaf" class="badge-icon" />
-                Zaufany użytkownik
-                <Icon name="mdi:check-decagram" class="badge-check" />
+              <span
+                class="owner-badge"
+                :class="listing.user?.emailVerified ? 'owner-badge--verified' : 'owner-badge--basic'"
+              >
+                <Icon
+                  :name="listing.user?.emailVerified ? 'mdi:check-decagram' : 'mdi:account-outline'"
+                  class="badge-icon"
+                />
+                {{ listing.user?.emailVerified ? 'Potwierdzony użytkownik' : 'Zwykły użytkownik' }}
               </span>
             </div>
           </div>
@@ -183,7 +188,6 @@ const hasAttributes = computed(
     listing.value?.difficulty ||
     listing.value?.petFriendly !== null,
 );
-
 </script>
 
 <style lang="scss" scoped>
@@ -263,7 +267,6 @@ const hasAttributes = computed(
   gap: 4.8rem;
   align-items: start;
   background: #fff;
-  border: 1px solid var(--border-soft);
   padding: 2.8rem;
   border-radius: 2rem;
 
@@ -521,25 +524,33 @@ const hasAttributes = computed(
 .owner-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
   margin-top: 0.2rem;
   padding: 0.3rem 0.9rem 0.3rem 0.6rem;
   border-radius: 999px;
-  background: var(--green-soft);
-  color: var(--green-dark);
   font-size: 1.2rem;
   font-weight: 600;
   width: fit-content;
+
+  &--verified {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border: 1px solid #a3d9b1;
+
+    .badge-icon { color: var(--green-main); }
+  }
+
+  &--basic {
+    background: #fef9ec;
+    color: #7a5c1e;
+    border: 1px solid #d1b87a;
+
+    .badge-icon { color: #d97706; }
+  }
 }
 
 .badge-icon {
   font-size: 1.4rem;
-  color: var(--green-main);
-}
-
-.badge-check {
-  font-size: 1.3rem;
-  color: var(--green-main);
 }
 
 /* ── CTA ── */

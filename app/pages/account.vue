@@ -176,7 +176,10 @@
                       >
                       <span class="listing-date">{{ item.city }}</span>
                     </div>
-                    <button class="fav-remove-btn" @click="removeFavorite(item.id)">
+                    <button
+                      class="fav-remove-btn"
+                      @click="removeFavorite(item.id)"
+                    >
                       <Icon name="mdi:heart" />
                     </button>
                   </div>
@@ -188,20 +191,46 @@
           <!-- Settings pane -->
           <div class="settings-pane">
             <div class="settings-inner">
-              <AccountSettingsPanel ref="settingsPanel" :items="settingsItems" @logout="onLogout">
+              <AccountSettingsPanel
+                ref="settingsPanel"
+                :items="settingsItems"
+                @logout="onLogout"
+              >
                 <template #profil>
                   <div class="profil-section">
                     <h2 class="section-title">Profil</h2>
                     <div class="settings-group-inner">
                       <!-- Email verification row -->
                       <div class="ios-row">
-                        <span class="ios-row-icon" :class="user.emailVerified ? 'ios-row-icon--ok' : 'ios-row-icon--warn'">
-                          <Icon :name="user.emailVerified ? 'mdi:check-decagram' : 'mdi:email-alert-outline'" />
+                        <span
+                          class="ios-row-icon"
+                          :class="
+                            user.emailVerified
+                              ? 'ios-row-icon--ok'
+                              : 'ios-row-icon--warn'
+                          "
+                        >
+                          <Icon
+                            :name="
+                              user.emailVerified
+                                ? 'mdi:check-decagram'
+                                : 'mdi:email-alert-outline'
+                            "
+                          />
                         </span>
                         <div class="ios-row-body">
                           <span class="ios-row-label">E-mail</span>
-                          <span class="ios-row-value" :class="user.emailVerified ? 'value--ok' : 'value--warn'">
-                            {{ user.emailVerified ? 'Potwierdzony' : 'Niepotwierdzony' }}
+                          <span
+                            class="ios-row-value"
+                            :class="
+                              user.emailVerified ? 'value--ok' : 'value--warn'
+                            "
+                          >
+                            {{
+                              user.emailVerified
+                                ? "Potwierdzony"
+                                : "Niepotwierdzony"
+                            }}
                           </span>
                         </div>
                         <button
@@ -210,12 +239,29 @@
                           :disabled="verifyLoading"
                           @click="sendVerification"
                         >
-                          {{ verifyLoading ? '...' : 'Wyślij link' }}
+                          {{ verifyLoading ? "..." : "Wyślij link" }}
                         </button>
                         <Icon v-else name="mdi:check" class="ios-row-check" />
                       </div>
+
+                      <!-- Change password row -->
+                      <NuxtLink to="/account-change-password" class="ios-row ios-row--link">
+                        <span class="ios-row-icon ios-row-icon--pwd">
+                          <Icon name="mdi:lock-outline" />
+                        </span>
+                        <div class="ios-row-body">
+                          <span class="ios-row-label">Hasło</span>
+                        </div>
+                        <Icon name="mdi:chevron-right" class="ios-row-chevron" />
+                      </NuxtLink>
                     </div>
-                    <p v-if="verifyMsg" class="verify-msg" :class="verifyMsgType">{{ verifyMsg }}</p>
+                    <p
+                      v-if="verifyMsg"
+                      class="verify-msg"
+                      :class="verifyMsgType"
+                    >
+                      {{ verifyMsg }}
+                    </p>
                   </div>
                 </template>
               </AccountSettingsPanel>
@@ -281,7 +327,8 @@ async function sendVerification() {
     verifyMsg.value = "Link weryfikacyjny został wysłany. Sprawdź skrzynkę.";
     verifyMsgType.value = "ok";
   } catch (e: any) {
-    verifyMsg.value = e?.data?.statusMessage ?? "Wystąpił błąd. Spróbuj ponownie.";
+    verifyMsg.value =
+      e?.data?.statusMessage ?? "Wystąpił błąd. Spróbuj ponownie.";
     verifyMsgType.value = "error";
   } finally {
     verifyLoading.value = false;
@@ -325,9 +372,11 @@ const { data: listingsData, pending: listingsPending } = await useFetch<{
 }>("/api/listings/my");
 const myListings = computed(() => listingsData.value?.listings ?? []);
 
-const { data: favoritesData, pending: favoritesPending, refresh: refreshFavorites } = await useFetch(
-  "/api/favorites/listings",
-);
+const {
+  data: favoritesData,
+  pending: favoritesPending,
+  refresh: refreshFavorites,
+} = await useFetch("/api/favorites/listings");
 const myFavorites = computed(() => favoritesData.value?.items ?? []);
 
 const { toggle: toggleFavorite } = useFavorites();
@@ -550,7 +599,9 @@ async function confirmDelete() {
     cursor: pointer;
     transition: background 0.15s;
 
-    &:hover { background: #fdf0c4; }
+    &:hover {
+      background: #fdf0c4;
+    }
   }
 }
 
@@ -700,6 +751,7 @@ async function confirmDelete() {
   font-weight: 500;
   color: var(--text-main);
   margin: 0;
+  text-align: center;
 }
 
 .section-loading,
@@ -992,6 +1044,22 @@ async function confirmDelete() {
   padding: 1.1rem 1.4rem;
 }
 
+.ios-row--link {
+  text-decoration: none;
+  color: var(--text-main);
+  border-top: 1px solid var(--border-soft);
+  transition: background 0.12s;
+
+  &:hover { background: var(--green-soft); }
+}
+
+.ios-row-chevron {
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
 .ios-row-icon {
   width: 3.2rem;
   height: 3.2rem;
@@ -1005,6 +1073,7 @@ async function confirmDelete() {
 
   &--ok   { background: var(--green-main); }
   &--warn { background: #d97706; }
+  &--pwd  { background: #6d7a9f; }
 }
 
 .ios-row-body {
@@ -1026,8 +1095,12 @@ async function confirmDelete() {
   font-size: 1.3rem;
   font-weight: 500;
 
-  &.value--ok   { color: var(--green-main); }
-  &.value--warn { color: #d97706; }
+  &.value--ok {
+    color: var(--green-main);
+  }
+  &.value--warn {
+    color: #d97706;
+  }
 }
 
 .ios-row-action {
@@ -1043,8 +1116,13 @@ async function confirmDelete() {
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover    { background: #c5e8c8; }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover {
+    background: #c5e8c8;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .ios-row-check {
@@ -1059,8 +1137,16 @@ async function confirmDelete() {
   padding: 0.8rem 1.2rem;
   margin-top: 0.8rem;
 
-  &.ok    { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-  &.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+  &.ok {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+  &.error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+  }
 }
 
 /* ── Misc ── */

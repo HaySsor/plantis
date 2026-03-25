@@ -107,7 +107,7 @@ const chips = computed(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border-radius: 999px;
+  border-radius: 8px;
   font-weight: 500;
   white-space: nowrap;
 }

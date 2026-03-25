@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       rejectionReason: true,
       createdAt: true,
       images: { select: { url: true, order: true }, orderBy: { order: "asc" } },
-      user: { select: { name: true } },
+      user: { select: { name: true, emailVerified: true } },
     },
   });
 
