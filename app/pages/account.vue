@@ -301,7 +301,6 @@
 <script setup lang="ts">
 const { user, loading, fetchMe, logout } = useAuth();
 
-onMounted(() => fetchMe().catch(() => {}));
 
 const userInitial = computed(() =>
   (user.value?.name?.charAt(0) ?? "U").toUpperCase(),
@@ -367,16 +366,16 @@ interface MyListing {
   images: { url: string }[];
 }
 
-const { data: listingsData, pending: listingsPending } = await useFetch<{
+const { data: listingsData, pending: listingsPending } = useFetch<{
   listings: MyListing[];
-}>("/api/listings/my");
+}>("/api/listings/my", { lazy: true });
 const myListings = computed(() => listingsData.value?.listings ?? []);
 
 const {
   data: favoritesData,
   pending: favoritesPending,
   refresh: refreshFavorites,
-} = await useFetch("/api/favorites/listings");
+} = useFetch("/api/favorites/listings", { lazy: true });
 const myFavorites = computed(() => favoritesData.value?.items ?? []);
 
 const { toggle: toggleFavorite } = useFavorites();
