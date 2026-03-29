@@ -20,7 +20,7 @@ onMounted(async () => {
 
   await Promise.all([
     fetchMe().catch(() => {}),
-    new Promise((resolve) => setTimeout(resolve, 600)),
+    new Promise((resolve) => setTimeout(resolve, 1400)),
   ]);
   appReady.value = true;
 });

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useFetch<{ listings: number; users: number; cities: number }>("/api/stats");
+const { data } = useFetch<{ listings: number; users: number; cities: number }>("/api/stats", { lazy: true });
 
 const stats = computed(() => [
   { icon: "mdi:flower-outline", value: data.value?.listings ?? 0, label: "ogłoszeń" },

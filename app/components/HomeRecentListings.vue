@@ -50,10 +50,11 @@ type ListingItem = {
   user: { name: string } | null;
 };
 
-const { data, pending } = await useFetch<{ items: ListingItem[] }>(
+const { data, pending } = useFetch<{ items: ListingItem[] }>(
   "/api/listings",
   {
     query: { pageSize: 4 },
+    lazy: true,
   },
 );
 
